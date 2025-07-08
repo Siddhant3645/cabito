@@ -154,14 +154,7 @@ export const apiGetSerendipitySuggestion = async (payload) => {
     return handleResponse(response);
 };
 
-export const apiInsertActivityIntoItinerary = async (currentItinerary, newActivity, originalRequest, currentHeading, currentWeather) => {
-    const payload = {
-        current_itinerary: currentItinerary,
-        new_activity: newActivity,
-        original_request: originalRequest,
-        current_heading: currentHeading,
-        current_weather: currentWeather,
-    };
+export const apiInsertActivityIntoItinerary = async (payload) => {
     const response = await customFetch(`${API_BASE_URL}/api/itinerary/insert-activity`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -98,6 +98,11 @@ body.modal-open {
 }
 .nav-group-left { display: flex; align-items: center; gap: 25px; }
 
+.nav-brand-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
 .nav-logo {
   height: 38px;
   margin-right: 10px;
@@ -114,8 +119,9 @@ body.modal-open {
     color: var(--color-dark-blue);
     text-decoration: none;
 }
-.nav-links { display: flex; gap: 25px; }
-.nav-links a {
+/* This now correctly targets the desktop nav links */
+.nav-links-desktop { display: flex; gap: 25px; }
+.nav-links-desktop a {
     text-decoration: none;
     color: var(--color-text-secondary);
     font-weight: 700;
@@ -124,16 +130,18 @@ body.modal-open {
     position: relative;
     transition: color 0.2s ease;
 }
-.nav-links a:hover, .nav-links a.active { color: var(--color-dark-blue); }
-.nav-links a::after {
+.nav-links-desktop a:hover, .nav-links-desktop a.active { color: var(--color-dark-blue); }
+.nav-links-desktop a::after {
     content: ''; position: absolute; width: 0; height: 3px;
     bottom: 0; left: 0;
     background-color: var(--color-accent-focus);
     transition: width 0.3s ease;
     border-radius: 2px;
 }
-.nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
-.nav-auth { display: flex; align-items: center; gap: 15px; }
+.nav-links-desktop a:hover::after, .nav-links-desktop a.active::after { width: 100%; }
+
+/* This now correctly targets the desktop auth section */
+.nav-auth-desktop { display: flex; align-items: center; gap: 15px; }
 .nav-user { font-size: 0.95rem; color: var(--color-text-dark); margin-right: 10px; font-weight: 700; }
 .nav-button {
   font-family: var(--font-body); font-weight: 700; font-size: 0.9rem;
@@ -440,6 +448,21 @@ footer p { color: var(--color-light-blue-gray); margin: 0;}
 .itinerary-table.is-skeleton tbody tr { background-color: var(--color-white); }
 .itinerary-table.is-skeleton tbody tr:nth-of-type(even) { background-color: var(--color-table-row-even); }
 
+/* --- Itinerary Row Hover Effect --- */
+.leg-type-activity {
+  /* Necessary for z-index to work on hover */
+  position: relative; 
+  transition: all 0.2s ease-in-out;
+}
+
+.leg-type-activity:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  background-color: var(--color-white); /* Ensure a solid background on hover */
+  z-index: 10;
+  cursor: pointer;
+}
+
 /* --- Serendipity Toast Styles --- */
 .serendipity-custom-toast { background-color: var(--color-white) !important; color: var(--color-text-dark) !important; border-radius: 10px !important; box-shadow: 0 5px 20px rgba(0,0,0,0.18) !important; border-left: 6px solid var(--color-accent-orange) !important; padding: 12px 15px !important; width: 350px !important; }
 .serendipity-custom-toast .Toastify__progress-bar { background: var(--color-accent-orange) !important; height: 4px !important; }
@@ -654,7 +677,7 @@ footer p { color: var(--color-light-blue-gray); margin: 0;}
 .itinerary-map-and-table-grid.map-is-visible .itinerary-table-container {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
-    box-shadow: 0 10px 25px -8px rgba(45, 55, 72, 0.3);
+    box-shadow: 0 -20px 25px -8px rgba(45, 55, 72, 0.3);
 }
 .map-toggle-button-top-center {
     position: absolute;
@@ -885,4 +908,100 @@ footer p { color: var(--color-light-blue-gray); margin: 0;}
   color: var(--color-text-dark);
   font-family: var(--font-heading);
   animation: fadeIn 0.5s ease-out; /* Add fade-in for smooth appearance */
+}
+
+/* --- Hamburger Menu & Responsive Nav --- */
+.hamburger-button {
+  display: none; /* Hidden by default */
+  font-size: 1.8rem;
+  background: none;
+  border: none;
+  color: var(--color-dark-blue);
+  cursor: pointer;
+  z-index: 2001; /* Above the main nav */
+}
+
+.mobile-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(26, 43, 69, 0.95); /* Dark blue overlay */
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.mobile-menu-close {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  font-size: 2.5rem;
+  background: none;
+  border: none;
+  color: var(--color-white);
+  cursor: pointer;
+}
+
+.mobile-menu-links {
+  text-align: center;
+}
+
+.mobile-menu-links a {
+  display: block;
+  color: var(--color-white);
+  text-decoration: none;
+  font-size: 2rem;
+  font-family: var(--font-heading);
+  padding: 15px 0;
+  transition: color 0.2s ease;
+}
+
+.mobile-menu-links a:hover {
+  color: var(--color-accent-orange);
+}
+
+.mobile-menu-links hr {
+  width: 80px;
+  border-color: rgba(255, 255, 255, 0.3);
+  margin: 20px auto;
+}
+
+.mobile-menu-auth {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+.mobile-menu-auth .nav-user {
+    color: var(--color-white);
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+
+/* --- Media Query to control desktop vs mobile nav --- */
+@media (max-width: 768px) {
+  .nav-links-desktop,
+  .nav-auth-desktop {
+    display: none; /* Hide desktop links and auth on mobile */
+  }
+
+  .hamburger-button {
+    display: block; /* Show hamburger button on mobile */
+  }
+  
+  .main-nav {
+    padding: 15px 25px; /* Adjust padding for mobile */
+  }
+
+  /* Hide the hamburger button if the mobile menu is open */
+  .App.mobile-menu-is-open .hamburger-button {
+      display: none;
+  }
 }

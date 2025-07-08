@@ -1,4 +1,4 @@
-// /frontend/src/components/ItineraryDisplay.jsx (Updated)
+// /frontend/src/components/ItineraryDisplay.jsx (Complete with responsive classes)
 
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import Confetti from 'react-confetti';
@@ -75,8 +75,7 @@ const getTimeOfDaySymbol = (descriptor, isDay) => {
 
 const ItinerarySummary = ({ data }) => {
     if (!data) return null;
-
-    const { start_datetime, end_datetime, budget, currency, location } = data;
+    const { start_datetime, end_datetime, budget, currency, location } = data.original_request_details || data;
     const startDate = new Date(start_datetime);
     const endDate = new Date(end_datetime);
 
@@ -94,7 +93,6 @@ const ItinerarySummary = ({ data }) => {
         const days = Math.floor(totalHours / 24);
         const hours = Math.floor(totalHours) % 24;
         const minutes = Math.round((totalHours * 60) % 60);
-
         let parts = [];
         if (days > 0) parts.push(`${days}d`);
         if (hours > 0) parts.push(`${hours}h`);
@@ -104,30 +102,14 @@ const ItinerarySummary = ({ data }) => {
 
     return (
         <div className="itinerary-summary-box">
-            <div className="summary-item">
-                <span className="summary-label">📍 Location</span>
-                <span className="summary-value">{location}</span>
-            </div>
-            <div className="summary-item">
-                <span className="summary-label">▶️ From</span>
-                <span className="summary-value">{formatSummaryDate(startDate)}, {formatSummaryTime(startDate)}</span>
-            </div>
-            <div className="summary-item">
-                <span className="summary-label">⏹️ To</span>
-                <span className="summary-value">{formatSummaryDate(endDate)}, {formatSummaryTime(endDate)}</span>
-            </div>
-            <div className="summary-item">
-                <span className="summary-label">⏳ Duration</span>
-                <span className="summary-value">{calculateDuration(startDate, endDate)}</span>
-            </div>
-            <div className="summary-item">
-                <span className="summary-label">💰 Budget</span>
-                <span className="summary-value">~ {new Intl.NumberFormat('en-IN', { style: 'currency', currency: currency || 'INR' }).format(budget)}</span>
-            </div>
+            <div className="summary-item"><span className="summary-label">📍 Location</span><span className="summary-value">{location}</span></div>
+            <div className="summary-item"><span className="summary-label">▶️ From</span><span className="summary-value">{formatSummaryDate(startDate)}, {formatSummaryTime(startDate)}</span></div>
+            <div className="summary-item"><span className="summary-label">⏹️ To</span><span className="summary-value">{formatSummaryDate(endDate)}, {formatSummaryTime(endDate)}</span></div>
+            <div className="summary-item"><span className="summary-label">⏳ Duration</span><span className="summary-value">{calculateDuration(startDate, endDate)}</span></div>
+            <div className="summary-item"><span className="summary-label">💰 Budget</span><span className="summary-value">~ {new Intl.NumberFormat('en-IN', { style: 'currency', currency: currency || 'INR' }).format(budget)}</span></div>
         </div>
     );
 };
-
 
 function ItineraryDisplay({ itineraryData, onRemove, completedIndices, onToggleComplete, progressPercentage, isRegenerating, tripStatus, isViewOnly = false, onOpenActivityDetail, originalFormData }) {
     const [isActivityDetailModalOpen, setIsActivityDetailModalOpen] = useState(false);
@@ -209,10 +191,10 @@ function ItineraryDisplay({ itineraryData, onRemove, completedIndices, onToggleC
                         <table className="itinerary-table">
                             <thead>
                                 <tr>
-                                    {!isViewOnly && <th className="col-status">Status</th>}
+                                    {!isViewOnly && <th className="col-status mobile-hidden">Status</th>}
                                     <th className="col-activity">Leg / Activity</th>
-                                    <th className="col-type">Type</th>
-                                    <th className="col-start">Start Time</th>
+                                    <th className="col-type mobile-hidden">Type</th>
+                                    <th className="col-start mobile-hidden">Start Time</th>
                                     <th className="col-end">End Time</th>
                                     <th className="col-duration">Duration</th>
                                     <th className="col-cost">Est. Cost</th>
@@ -232,7 +214,7 @@ function ItineraryDisplay({ itineraryData, onRemove, completedIndices, onToggleC
                                                 onClick={() => item.leg_type === 'ACTIVITY' && handleOpenActivityDetailModal(item)}
                                             >
                                                 {!isViewOnly && (
-                                                    <td className="col-status" onClick={(e) => e.stopPropagation()}>
+                                                    <td className="col-status mobile-hidden" onClick={(e) => e.stopPropagation()}>
                                                         {item.leg_type === 'ACTIVITY' && (
                                                             <input
                                                                 type="checkbox"
@@ -256,8 +238,8 @@ function ItineraryDisplay({ itineraryData, onRemove, completedIndices, onToggleC
                                                     </div>
                                                 </td>
 
-                                                <td className="col-type"><span title={getActivityDescriptionTooltip(item.matched_preferences, item.food_type, item.specific_amenity)}>{formatActivityEmojis(item.matched_preferences, item.food_type, item.specific_amenity)}</span></td>
-                                                <td className="col-start">{formatTimeToLocalAMPM(item.leg_type === 'TRAVEL' ? item.estimated_departure : item.estimated_arrival)}</td>
+                                                <td className="col-type mobile-hidden"><span title={getActivityDescriptionTooltip(item.matched_preferences, item.food_type, item.specific_amenity)}>{formatActivityEmojis(item.matched_preferences, item.food_type, item.specific_amenity)}</span></td>
+                                                <td className="col-start mobile-hidden">{formatTimeToLocalAMPM(item.leg_type === 'TRAVEL' ? item.estimated_departure : item.estimated_arrival)}</td>
                                                 <td className="col-end">{formatTimeToLocalAMPM(item.leg_type === 'TRAVEL' ? item.estimated_arrival : item.estimated_departure)}</td>
                                                 <td className="col-duration">{formatDuration(item.estimated_duration_hrs)}</td>
                                                 <td className="col-cost">{costText}</td>
@@ -265,7 +247,7 @@ function ItineraryDisplay({ itineraryData, onRemove, completedIndices, onToggleC
                                             </tr>
                                         );
                                     }) : (
-                                        <tr><td colSpan={isViewOnly ? 7 : 8} style={{textAlign: 'center', padding: '30px'}}>No activities found for this plan.</td></tr>
+                                        <tr><td colSpan={isViewOnly ? 4 : 5} style={{textAlign: 'center', padding: '30px'}}>No activities found for this plan.</td></tr>
                                     )}
                                 </tbody>
                             </table>
@@ -275,7 +257,7 @@ function ItineraryDisplay({ itineraryData, onRemove, completedIndices, onToggleC
                            <table className="itinerary-table">
                                 <tfoot>
                                     <tr>
-                                        <td colSpan={isViewOnly ? 6 : 7}>Total Estimated Cost:</td>
+                                        <td colSpan={isViewOnly ? 4 : 5}>Total Estimated Cost:</td>
                                         <td className="col-cost">₹{itineraryData.total_estimated_cost.toFixed(2)}</td>
                                         {!isViewOnly && <td></td>}
                                     </tr>
