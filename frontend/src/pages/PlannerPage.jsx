@@ -44,7 +44,7 @@ function PlannerPage() {
     const [automaticSerendipityFetchCount, setAutomaticSerendipityFetchCount] = useState(0);
     const serendipityIntervalRef = useRef(null);
     
-    useBodyScrollLock(activityDetailModalOpen);
+    //useBodyScrollLock(activityDetailModalOpen);
 
     const isTripCompleted = useMemo(() => tripStatus === "completed", [tripStatus]);
 
