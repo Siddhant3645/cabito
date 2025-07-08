@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from typing import AsyncGenerator
 
-from .core.config import settings # Import our centralized settings
+from core.config import settings # Import our centralized settings
 
 # Use the DATABASE_URL from our settings object
 engine = create_async_engine(settings.DATABASE_URL, echo=False) # 'echo' is noisy, better to turn off by default
@@ -14,7 +14,7 @@ Base = declarative_base()
 
 # Import all the models here so that Base has them registered
 # This is crucial for tools like Alembic and for create_db_and_tables to work
-from .models.all_models import UserAccount, UserInteraction, LearnedUserProfile, UserTrip
+from models.all_models import UserAccount, UserInteraction, LearnedUserProfile, UserTrip
 
 # Create a sessionmaker for creating AsyncSession instances
 AsyncSessionLocal = sessionmaker(
