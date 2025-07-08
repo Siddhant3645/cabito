@@ -7,12 +7,12 @@ from sqlalchemy.exc import IntegrityError
 from jose import jwt, JWTError
 from typing import Optional # +++ This import was missing +++
 
-from ..database import get_db
-from ..crud import user_crud
-from ..models.all_models import UserAccount
-from ..schemas.user_schemas import UserCreate, UserPublic, Token
-from ..core.security import create_access_token, create_refresh_token, verify_password
-from ..core.config import settings
+from database import get_db
+from crud import user_crud
+from models.all_models import UserAccount
+from schemas.user_schemas import UserCreate, UserPublic, Token
+from core.security import create_access_token, create_refresh_token, verify_password
+from core.config import settings
 
 router = APIRouter()
 

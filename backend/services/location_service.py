@@ -12,8 +12,8 @@ import httpx
 import wikipedia
 from wikipedia.exceptions import DisambiguationError, PageError
 
-from ..core.config import settings
-from ..core.constants import OVERPASS_API_URL, OVERPASS_TIMEOUT, WIKI_LOOKUP_TIMEOUT
+from core.config import settings
+from core.constants import OVERPASS_API_URL, OVERPASS_TIMEOUT, WIKI_LOOKUP_TIMEOUT
 
 logger = logging.getLogger(__name__)
 

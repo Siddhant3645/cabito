@@ -2,14 +2,14 @@
 from fastapi import APIRouter, Depends, Request, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..schemas import itinerary_schemas
-from ..database import get_db
-from ..models.all_models import UserAccount
-from ..services import itinerary_service
-from .users import get_current_active_user
+from schemas import itinerary_schemas
+from database import get_db
+from models.all_models import UserAccount
+from services import itinerary_service
+from users import get_current_active_user
 
 from fastapi_cache.decorator import cache
-from ..core.limiter import limiter
+from core.limiter import limiter
 
 router = APIRouter()
 

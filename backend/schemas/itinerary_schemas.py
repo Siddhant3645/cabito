@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator, Validat
 from typing import List, Optional, Dict, Any, Literal
 from datetime import datetime, time as dt_time, timedelta, timezone as dt_timezone
 
-from ..core.constants import DEFAULT_TRAVEL_MODE
+from core.constants import DEFAULT_TRAVEL_MODE
 
 # --- Weather Schemas ---
 class WeatherCondition(BaseModel):

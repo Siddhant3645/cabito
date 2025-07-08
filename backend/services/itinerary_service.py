@@ -21,10 +21,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .. import models
-from ..core import constants
-from ..schemas import itinerary_schemas
-from ..services import ai_service, location_service, weather_service
-from ..services.location_service import LocationServiceError
+from core import constants
+from schemas import itinerary_schemas
+from services import ai_service, location_service, weather_service
+from services.location_service import LocationServiceError
 
 try:
     from opening_hours import OpeningHours

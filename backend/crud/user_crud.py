@@ -2,9 +2,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from ..models.all_models import UserAccount
-from ..schemas.user_schemas import UserCreate
-from ..core.security import get_password_hash
+from models.all_models import UserAccount
+from schemas.user_schemas import UserCreate
+from core.security import get_password_hash
 
 
 async def get_user_by_email(db: AsyncSession, email: str) -> UserAccount | None:

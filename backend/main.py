@@ -15,10 +15,10 @@ from redis import asyncio as aioredis
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
-from .api import auth, itinerary, trips, users
-from .core.config import settings
-from .core.limiter import limiter
-from .database import create_db_and_tables
+from api import auth, itinerary, trips, users
+from core.config import settings
+from core.limiter import limiter
+from database import create_db_and_tables
 
 logging.basicConfig(level=settings.LOG_LEVEL.upper(), format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)

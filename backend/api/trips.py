@@ -6,13 +6,13 @@ from fastapi import APIRouter, Depends, HTTPException, Path as FastApiPath, Requ
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..database import get_db
-from ..models.all_models import UserAccount, UserTrip
-from ..schemas.itinerary_schemas import (MemorySnapshotResponse,
+from database import get_db
+from models.all_models import UserAccount, UserTrip
+from schemas.itinerary_schemas import (MemorySnapshotResponse,
                                          TripCompletionStatus,
                                          TripListResponse, UserTripPydantic)
-from ..services import ai_service
-from .users import get_current_active_user
+from services import ai_service
+from users import get_current_active_user
 
 router = APIRouter()
 

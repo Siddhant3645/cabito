@@ -7,7 +7,7 @@ from sqlalchemy import (Column, Integer, String, Boolean, DateTime, Text,
 from sqlalchemy.orm import relationship
 
 # Update the import to be relative to the new file location
-from ..database import Base
+from database import Base
 
 # --- Enums for Database ---
 class InteractionTypeEnum(str, enum.Enum):

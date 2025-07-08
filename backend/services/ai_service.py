@@ -5,9 +5,9 @@ import json
 import google.generativeai as genai
 from typing import Optional, List, Dict, Any
 
-from ..models.all_models import UserTrip
-from ..core import constants
-from ..schemas import itinerary_schemas
+from models.all_models import UserTrip
+from core import constants
+from schemas import itinerary_schemas
 
 logger = logging.getLogger(__name__)
 

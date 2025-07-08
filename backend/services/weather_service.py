@@ -6,8 +6,8 @@ import httpx
 from typing import Optional, Dict, Any
 import google.generativeai as genai
 
-from ..schemas import itinerary_schemas
-from ..core.constants import DEFAULT_WEATHER_CONDITION_OBJ, WMO_CODE_DESCRIPTIONS_DICT
+from schemas import itinerary_schemas
+from core.constants import DEFAULT_WEATHER_CONDITION_OBJ, WMO_CODE_DESCRIPTIONS_DICT
 
 logger = logging.getLogger(__name__)
 

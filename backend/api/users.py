@@ -8,12 +8,12 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..core.config import settings
-from ..core.security import get_password_hash, verify_password
-from ..crud import user_crud
-from ..database import get_db
-from ..models.all_models import UserAccount
-from ..schemas.user_schemas import (ChangePasswordRequest, DeleteAccountRequest,
+from core.config import settings
+from core.security import get_password_hash, verify_password
+from crud import user_crud
+from database import get_db
+from models.all_models import UserAccount
+from schemas.user_schemas import (ChangePasswordRequest, DeleteAccountRequest,
                                   GenericSuccessResponse, TokenData,
                                   UserPublic)
 
