@@ -6,7 +6,7 @@ from schemas import itinerary_schemas
 from database import get_db
 from models.all_models import UserAccount
 from services import itinerary_service
-from users import get_current_active_user
+from api.users import get_current_active_user
 
 from fastapi_cache.decorator import cache
 from core.limiter import limiter

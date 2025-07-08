@@ -12,7 +12,7 @@ from schemas.itinerary_schemas import (MemorySnapshotResponse,
                                          TripCompletionStatus,
                                          TripListResponse, UserTripPydantic)
 from services import ai_service
-from users import get_current_active_user
+from api.users import get_current_active_user
 
 router = APIRouter()
 
