@@ -1,4 +1,4 @@
-# /backend/main.py (Completed)
+# /backend/main.py (Corrected and Finalized)
 
 import logging
 from contextlib import asynccontextmanager
@@ -15,6 +15,7 @@ from redis import asyncio as aioredis
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
+# --- Corrected absolute imports for deployment ---
 from api import auth, itinerary, trips, users
 from core.config import settings
 from core.limiter import limiter
@@ -29,6 +30,11 @@ async def lifespan(app: FastAPI):
     """Manages application startup and shutdown events, including resource initialization."""
     logger.info(f"Starting up {settings.PROJECT_NAME}...")
 
+    # +++ ADDED: Create database tables on startup +++
+    logger.info("Initializing database and creating tables...")
+    await create_db_and_tables()
+    logger.info("Database tables checked/created.")
+
     # --- CACHE INITIALIZATION ---
     try:
         redis = aioredis.from_url("redis://localhost", encoding="utf-8", decode_responses=True)
@@ -37,24 +43,20 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.error(f"Could not connect to Redis for cache. Cache will be unavailable. Error: {e}")
 
+    # --- HTTP & API CLIENT INITIALIZATION ---
     app.state.httpx_client = httpx.AsyncClient(timeout=90.0)
     app.state.gmaps_client = None
     app.state.gemini_model = None
     
     if settings.MAPS_API_KEY:
-        # Re-introduce the custom session with a larger connection pool to prevent timeout issues
         session = requests.Session()
         adapter = requests.adapters.HTTPAdapter(pool_connections=100, pool_maxsize=100)
         session.mount("https://", adapter)
-        
-        # Pass the custom session to the googlemaps.Client
         app.state.gmaps_client = googlemaps.Client(key=settings.MAPS_API_KEY, requests_session=session)
-        logger.info("Google Maps client initialized with custom session (pool size 100).")
+        logger.info("Google Maps client initialized with custom session.")
     else:
         logger.warning("MAPS_API_KEY not set. Google Maps features will be unavailable.")
 
-    # Note: This uses the original google-generativeai SDK. 
-    # If/when you move to Vertex AI, this block will be replaced.
     if settings.GOOGLE_API_KEY_GEMINI:
         try:
             genai.configure(api_key=settings.GOOGLE_API_KEY_GEMINI)
@@ -68,6 +70,7 @@ async def lifespan(app: FastAPI):
     
     logger.info("Startup complete.")
     yield
+    # --- SHUTDOWN LOGIC ---
     logger.info("Shutting down...")
     await app.state.httpx_client.aclose()
     logger.info("Shutdown complete.")
@@ -79,6 +82,8 @@ app = FastAPI(
     version="4.0.0",
     lifespan=lifespan
 )
+
+# Add Rate Limiting and Exception Handler
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
@@ -98,6 +103,7 @@ app.include_router(auth.router, prefix="/api", tags=["Authentication"])
 app.include_router(users.router, prefix="/api", tags=["Users"])
 app.include_router(trips.router, prefix="/api/trips", tags=["Trips"])
 app.include_router(itinerary.router, prefix="/api/itinerary", tags=["Itinerary"])
+
 
 @app.get("/health", tags=["System"])
 def health_check():
