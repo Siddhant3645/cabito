@@ -1,0 +1,32 @@
+# --- General ---
+# Environment variables - VERY IMPORTANT! Do not commit secrets.
+.env
+.env.*
+*.log
+
+# --- Python / Backend ---
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# --- Node.js / Frontend ---
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# --- OS / Editor Specific ---
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# JetBrains
+.idea/
