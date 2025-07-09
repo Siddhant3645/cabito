@@ -83,11 +83,6 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-origins = [
-    "https://cabito.co.in"
-    "https://www.cabito.co.in"
-    "https:cabito.vercel.app"
-]
 # Add Rate Limiting and Exception Handler
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
