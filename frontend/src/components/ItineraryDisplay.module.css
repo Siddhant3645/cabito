@@ -149,6 +149,7 @@
 }
 
 .itineraryTableContainer {
+    display: block; /* Visible by default on desktop */
     border: 1px solid var(--color-border);
     border-radius: 8px;
     overflow: hidden;
@@ -205,6 +206,7 @@
 .removeButton:disabled { cursor: not-allowed !important; opacity: 0.3 !important; background: none !important; transform: none !important; }
 
 .activityContainer { position: relative; display: inline-block; }
+.activityName { /* No specific styles needed */ }
 .customTooltip {
   position: absolute; bottom: 115%; left: 0; transform: none; background-color: var(--color-dark-blue);
   color: var(--color-white); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem;
@@ -229,6 +231,84 @@
 
 .progressBarContainer { margin-top: 25px; }
 
+.mobileCardLayout {
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+}
+.itineraryCard {
+    background-color: var(--color-background-light);
+    border: 1px solid var(--color-input-border);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.2s ease-in-out;
+}
+.itineraryCard.activity:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    cursor: pointer;
+}
+.cardIcon {
+    font-size: 1.8rem;
+    flex-shrink: 0;
+}
+.cardContent {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+.cardTitle {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--color-text-dark);
+}
+.cardDescription {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    margin-top: 4px;
+}
+.cardTiming {
+    flex-shrink: 0;
+    text-align: right;
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+}
+.cardTiming strong {
+    display: block;
+    color: var(--color-text-dark);
+    font-weight: 700;
+}
+.cardExpandedContent {
+    padding: 15px;
+    border-top: 1px solid var(--color-border);
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+.cardActionButton {
+    font-family: var(--font-body);
+    font-weight: 700;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--color-mid-blue);
+    background-color: var(--color-dark-blue);
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.cardActionButton:hover {
+    background-color: var(--color-mid-blue);
+}
+.cardActionButton.secondary {
+    background-color: white;
+    color: var(--color-dark-blue);
+}
+
 @media (max-width: 900px) {
   .itinerarySummaryBox {
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -236,6 +316,8 @@
 }
 
 @media (max-width: 768px) {
+  .itineraryTableContainer { display: none; }
+  .mobileCardLayout { display: flex; }
   .weatherDisplayBox {
     flex-direction: column;
     align-items: stretch;

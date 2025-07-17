@@ -1,4 +1,4 @@
-/* /frontend/src/components/Navbar.module.css (Updated for Side Drawer Menu) */
+/* /frontend/src/components/Navbar.module.css (Final Polish) */
 
 .mainNav {
     display: flex;
@@ -16,15 +16,17 @@
 .navGroupLeft { display: flex; align-items: center; gap: 25px; }
 .navBrandLink { display: flex; align-items: center; text-decoration: none; }
 .navLogo {
-  height: 38px;
-  margin-right: 10px;
+  height: 42px;
+  width: auto;
+  margin-right: 5px; /* <<< FIX: Reduced gap from 10px to 5px */
   mix-blend-mode: multiply;
   transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 .navLogo:hover { transform: scale(1.1) rotate(-10deg); }
 .navBrand {
     font-family: var(--font-heading);
-    font-size: 1.8rem; 
+    font-size: 2.1rem; /* <<< FIX: Increased font size to match logo height */
+    line-height: 1; /* <<< FIX: Ensures tight vertical alignment */
     font-weight: 800;
     color: var(--color-dark-blue);
     text-decoration: none;
@@ -172,11 +174,8 @@
     width: 100%;
     text-align: left;
     cursor: pointer;
-    border-bottom: none; /* Logout is now the last item */
+    border-bottom: none;
 }
-
-/* <<< .deleteButton style has been removed >>> */
-
 .authButtonsContainer {
     padding: 20px;
     display: flex;

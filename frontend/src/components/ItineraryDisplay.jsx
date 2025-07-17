@@ -1,4 +1,4 @@
-// /frontend/src/components/ItineraryDisplay.jsx (Complete & Refactored)
+// /frontend/src/components/ItineraryDisplay.jsx (Complete)
 
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import Confetti from 'react-confetti';
@@ -118,7 +118,8 @@ function ItineraryDisplay({ itineraryData, onRemove, completedIndices, onToggleC
     const [width, height] = useWindowSize();
     const [isMapVisible, setIsMapVisible] = useState(false);
     const [isMapModalOpen, setIsMapModalOpen] = useState(false);
-    
+    const [expandedIndex, setExpandedIndex] = useState(null);
+
     useEffect(() => {
         if (progressPercentage >= 100 && !isViewOnly) {
             setShowConfetti(true);
@@ -134,9 +135,19 @@ function ItineraryDisplay({ itineraryData, onRemove, completedIndices, onToggleC
         if (onOpenActivityDetail) { onOpenActivityDetail(activityItem); }
         else { setSelectedActivityForDetail(activityItem); setIsActivityDetailModalOpen(true); }
     };
+
+    const handleCardClick = (index, item) => {
+        if (item.leg_type !== 'ACTIVITY' || isViewOnly) return;
+
+        if (expandedIndex === index) {
+            setExpandedIndex(null);
+        } else {
+            setExpandedIndex(index);
+        }
+    };
     
     return (
-        <div>
+        <div className={styles.itineraryDisplay}>
             {showConfetti && <Confetti width={width} height={height} recycle={false} onConfettiComplete={() => setShowConfetti(false)} />}
             
             <div className={styles.itineraryDisplayBox}>
@@ -191,10 +202,10 @@ function ItineraryDisplay({ itineraryData, onRemove, completedIndices, onToggleC
                         <table className={styles.itineraryTable}>
                             <thead>
                                 <tr>
-                                    {!isViewOnly && <th className={styles.colStatus}>Status</th>}
+                                    {!isViewOnly && <th className={`${styles.colStatus} ${styles.mobileHidden}`}>Status</th>}
                                     <th className={styles.colActivity}>Leg / Activity</th>
-                                    <th className={styles.colType}>Type</th>
-                                    <th className={styles.colStart}>Start Time</th>
+                                    <th className={`${styles.colType} ${styles.mobileHidden}`}>Type</th>
+                                    <th className={`${styles.colStart} ${styles.mobileHidden}`}>Start Time</th>
                                     <th className={styles.colEnd}>End Time</th>
                                     <th className={styles.colDuration}>Duration</th>
                                     <th className={styles.colCost}>Est. Cost</th>
@@ -215,7 +226,7 @@ function ItineraryDisplay({ itineraryData, onRemove, completedIndices, onToggleC
                                             onClick={() => item.leg_type === 'ACTIVITY' && handleOpenActivityDetailModal(item)}
                                         >
                                             {!isViewOnly && (
-                                                <td className={styles.statusCell} onClick={(e) => e.stopPropagation()}>
+                                                <td className={`${styles.statusCell} ${styles.mobileHidden}`} onClick={(e) => e.stopPropagation()}>
                                                     {item.leg_type === 'ACTIVITY' && (
                                                         <input type="checkbox" checked={!!isCompleted} onChange={() => onToggleComplete(index)}/>
                                                     )}
@@ -235,8 +246,8 @@ function ItineraryDisplay({ itineraryData, onRemove, completedIndices, onToggleC
                                                 </div>
                                             </td>
 
-                                            <td className={`${styles.colType} ${styles.typeCell}`}><span title={getActivityDescriptionTooltip(item.matched_preferences, item.food_type, item.specificAmenity)}>{formatActivityEmojis(item.matched_preferences, item.food_type, item.specificAmenity)}</span></td>
-                                            <td className={`${styles.colStart} ${styles.timeCell}`}>{formatTimeToLocalAMPM(item.leg_type === 'TRAVEL' ? item.estimated_departure : item.estimated_arrival)}</td>
+                                            <td className={`${styles.colType} ${styles.mobileHidden}`}><span title={getActivityDescriptionTooltip(item.matched_preferences, item.food_type, item.specificAmenity)}>{formatActivityEmojis(item.matched_preferences, item.food_type, item.specificAmenity)}</span></td>
+                                            <td className={`${styles.colStart} ${styles.timeCell} ${styles.mobileHidden}`}>{formatTimeToLocalAMPM(item.leg_type === 'TRAVEL' ? item.estimated_departure : item.estimated_arrival)}</td>
                                             <td className={`${styles.colEnd} ${styles.timeCell}`}>{formatTimeToLocalAMPM(item.leg_type === 'TRAVEL' ? item.estimated_arrival : item.estimated_departure)}</td>
                                             <td className={`${styles.colDuration} ${styles.durationCell}`}>{formatDuration(item.estimated_duration_hrs)}</td>
                                             <td className={styles.colCost}>{costText}</td>
@@ -244,13 +255,13 @@ function ItineraryDisplay({ itineraryData, onRemove, completedIndices, onToggleC
                                         </tr>
                                     );
                                 }) : (
-                                    <tr><td colSpan={isViewOnly ? 7 : 8} style={{textAlign: 'center', padding: '30px'}}>No activities found for this plan.</td></tr>
+                                    <tr><td colSpan={isViewOnly ? 5 : 7}>No activities found for this plan.</td></tr>
                                 )}
                             </tbody>
                              {hasActivities && (
                                 <tfoot>
                                     <tr>
-                                        <td colSpan={isViewOnly ? 6 : 7} style={{textAlign: 'right', paddingRight: '12px'}}>Total Estimated Cost:</td>
+                                        <td colSpan={isViewOnly ? 4 : 6} style={{textAlign: 'right', paddingRight: '12px'}}>Total Estimated Cost:</td>
                                         <td className={styles.colCost}>₹{itineraryData.total_estimated_cost.toFixed(2)}</td>
                                         {!isViewOnly && <td></td>}
                                     </tr>
@@ -259,6 +270,44 @@ function ItineraryDisplay({ itineraryData, onRemove, completedIndices, onToggleC
                         </table>
                     </div>
                 </div>
+
+                <div className={styles.mobileCardLayout}>
+                    {hasActivities ? itineraryData.itinerary.map((item, index) => {
+                        const isExpanded = expandedIndex === index;
+                        return (
+                            <div key={item.osm_id || `${item.leg_type}-${index}`}>
+                                <div 
+                                    className={`${styles.itineraryCard} ${item.leg_type === 'ACTIVITY' ? styles.activity : ''}`}
+                                    onClick={() => handleCardClick(index, item)}
+                                >
+                                    <div className={styles.cardIcon}>
+                                        {item.leg_type === 'TRAVEL' ? '🚗' : '🏛️'}
+                                    </div>
+                                    <div className={styles.cardContent}>
+                                        <span className={styles.cardTitle}>{item.activity}</span>
+                                        {item.leg_type === 'ACTIVITY' && item.description && (
+                                            <p className={styles.cardDescription}>{item.description.substring(0, 50)}...</p>
+                                        )}
+                                    </div>
+                                    <div className={styles.cardTiming}>
+                                        <strong>{formatTimeToLocalAMPM(item.leg_type === 'TRAVEL' ? item.estimated_arrival : item.estimated_departure)}</strong>
+                                        <span>{formatDuration(item.estimated_duration_hrs)}</span>
+                                    </div>
+                                </div>
+                                {isExpanded && !isViewOnly && (
+                                    <div className={styles.cardExpandedContent}>
+                                        <button className={styles.cardActionButton}>Call Cab</button>
+                                        <button className={`${styles.cardActionButton} ${styles.secondary}`}>Order Food</button>
+                                        <button onClick={() => setExpandedIndex(null)} className={`${styles.cardActionButton} ${styles.secondary}`}>Exit</button>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    }) : (
+                        <p style={{textAlign: 'center', padding: '30px'}}>No activities found for this plan.</p>
+                    )}
+                </div>
+
 
                 {progressPercentage > 0 && !isViewOnly && (
                     <div className={styles.progressBarContainer}>
