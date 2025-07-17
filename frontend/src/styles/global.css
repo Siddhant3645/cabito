@@ -1,0 +1,225 @@
+/* /frontend/src/styles/global.css (Complete) */
+
+/* --- Google Font Import --- */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@500;700;800&display=swap');
+
+/* --- Color Palette & Variables --- */
+:root {
+  --color-dark-blue: #1A2B45;
+  --color-mid-blue: #5C7DA4;
+  --color-light-blue-gray: #D0D8E0;
+  --color-white: #FFFFFF;
+  --color-black: #111111;
+  --color-text-dark: #2D3748; /* Primary text */
+  --color-text-secondary: #4A5568; /* For less important text */
+  --color-text-light: #F7FAFC;
+  --color-border: #CBD5E0;
+  --color-input-border: #e6eaf1;
+  --color-background-light: #F8F9FA;
+  --color-background-card: var(--color-white);
+  --color-input-background: #f7fafd;
+  --color-accent-focus: #4299E1; /* A brighter blue for focus/accent */
+  --color-accent-orange: #FFA500;
+  --color-accent-orange-dark: #FF8C00;
+  --color-error-bg: #fed7d7;
+  --color-error-border: #fc8181;
+  --color-error-text: #c53030;
+  --color-notes-bg: #EBF8FF;
+  --color-notes-border: var(--color-mid-blue);
+  --color-ai-insight-bg: #fffbeb;
+  --color-input-focus-ring: rgba(92, 125, 164, 0.3); /* Based on mid-blue */
+
+  /* Table Colors */
+  --color-table-row-even: #f8faff;
+  --color-table-row-travel: #f7f9fc;
+  --color-table-hover: #e6f0f9;
+  
+  /* Other UI States */
+  --color-completed-text: #718096;
+  --color-completed-bg: #fdfdfd;
+  --color-completed-bg-even: #f7f7f7;
+  --color-disabled-bg: #e2e8f0;
+  --color-disabled-text: #a0aec0;
+  
+  /* Typography */
+  --font-heading: 'Poppins', sans-serif;
+  --font-body: 'Lato', sans-serif;
+}
+
+/* --- Base & Global Styles --- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin { 
+  to { transform: rotate(360deg); } 
+}
+
+@keyframes skeleton-pulse { 
+  0%, 100% { opacity: 1; } 
+  50% { opacity: 0.6; } 
+}
+
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0; transform: translateY(10px); }
+    20%, 80% { opacity: 1; transform: translateY(0); }
+}
+
+*, *::before, *::after { 
+  box-sizing: border-box; 
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background-color: var(--color-background-light);
+  color: var(--color-text-dark);
+  line-height: 1.7;
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
+/* --- App Layout --- */
+.App { 
+  display: flex; 
+  flex-direction: column; 
+  min-height: 100vh; 
+}
+
+.App-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 25px 40px 25px;
+  width: 100%;
+  flex-grow: 1;
+  position: relative;
+  z-index: 2;
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* --- Reusable CTA Button --- */
+.cta-button {
+  padding: 12px 30px;
+  font-size: 1.1rem;
+  background-color: var(--color-dark-blue);
+  color: var(--color-white);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  display: inline-block;
+}
+.cta-button:hover {
+  background-color: var(--color-mid-blue);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+.cta-button:active {
+  transform: translateY(1px);
+}
+
+/* --- Global Modal Styles --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.65);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    padding: 20px;
+    overflow-y: auto;
+}
+.modal-content {
+    background: white;
+    margin: auto;
+    padding: 30px 40px;
+    border-radius: 12px;
+    max-width: 700px;
+    width: 100%;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    position: relative;
+}
+.modal-close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    line-height: 1;
+    padding: 0;
+    z-index: 10;
+}
+.modal-close-button:hover { color: var(--color-text-dark); }
+.modal-content h3 { margin-top: 0; margin-bottom: 20px; }
+
+/* Large modal variant for itinerary/map */
+.modal-content.modal-large {
+    max-width: 1200px;
+    width: 95%;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    max-height: 95vh;
+}
+.modal-large .modal-inner-content {
+    padding: 30px 40px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+/* Header with action button (e.g., Copy button) */
+.modal-header-with-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.modal-header-with-action h3 { margin: 0; flex-grow: 1; }
+.copy-button {
+    background: var(--color-light-blue-gray);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    line-height: 1;
+    transition: all 0.2s ease;
+}
+.copy-button:hover { background: var(--color-mid-blue); color: var(--color-white); }
+.copy-button:active { transform: scale(0.95); }
+
+/* Memory snapshot text style */
+.memory-snapshot-text {
+    background-color: #fffde7;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 5px solid var(--color-accent-orange);
+    line-height: 1.7;
+    font-family: 'Georgia', serif;
+    font-size: 1.05em;
+    color: #5d4037;
+    white-space: pre-wrap;
+    max-height: 60vh;
+    overflow-y: auto;
+}

@@ -1,19 +1,19 @@
 // /frontend/src/components/SignupForm.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import formStyles from './AuthForm.module.css'; // <<< Import the form styles
 
 function SignupForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [formError, setFormError] = useState(''); // For client-side validation errors only
+  const [formError, setFormError] = useState('');
   
-  // Get authentication state and functions from the context
   const { signup, authError, isLoading, setAuthError } = useAuth();
   const navigate = useNavigate();
 
-  // Clear authentication error when the component unmounts or form inputs change
   useEffect(() => {
     return () => {
       if (authError) {
@@ -26,9 +26,8 @@ function SignupForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setFormError('');
-    setAuthError(null); // Clear previous backend errors on a new attempt
+    setAuthError(null);
 
-    // --- Client-side validation ---
     if (password !== confirmPassword) {
       setFormError("Passwords do not match.");
       return;
@@ -38,22 +37,18 @@ function SignupForm() {
       return;
     }
 
-    // Call the signup function from AuthContext
     const success = await signup(email, password);
     
     if (success) {
-      // The context will show a success toast. We just navigate.
       navigate('/login');
     }
-    // If it fails, the authError state in the context will be set, and the message will be displayed.
   };
 
   return (
-    <form onSubmit={handleSubmit} className="auth-form">
-       {/* Show client-side or backend errors */}
-       {(formError || authError) && <p className="error-message">{formError || authError}</p>}
+    <form onSubmit={handleSubmit} className={formStyles.authForm}> {/* <<< Apply scoped classes */}
+       {(formError || authError) && <p className={formStyles.errorMessage}>{formError || authError}</p>}
       
-      <div className="form-group">
+      <div className={formStyles.formGroup}>
         <label htmlFor="signup-email">Email:</label>
         <input 
           type="email" 
@@ -66,7 +61,7 @@ function SignupForm() {
         />
       </div>
 
-      <div className="form-group">
+      <div className={formStyles.formGroup}>
         <label htmlFor="signup-password">Password (min 8 chars):</label>
         <input 
           type="password" 
@@ -80,7 +75,7 @@ function SignupForm() {
         />
       </div>
 
-       <div className="form-group">
+       <div className={formStyles.formGroup}>
         <label htmlFor="signup-confirm-password">Confirm Password:</label>
         <input 
           type="password" 
@@ -94,7 +89,7 @@ function SignupForm() {
         />
       </div>
 
-      <button type="submit" className="submit-button" disabled={isLoading}>
+      <button type="submit" className={formStyles.submitButton} disabled={isLoading}>
         {isLoading ? 'Signing Up...' : 'Sign Up'}
       </button>
     </form>

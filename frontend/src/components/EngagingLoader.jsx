@@ -1,10 +1,9 @@
-// /frontend/src/components/EngagingLoader.jsx (Updated)
+// /frontend/src/components/EngagingLoader.jsx (Refactored)
 
 import React, { useState, useEffect } from 'react';
-import TextCycleLoader from './TextCycleLoader'; // Import the new text loader
-import '../App.css';
+import TextCycleLoader from './TextCycleLoader';
+import styles from './EngagingLoader.module.css';
 
-// Updated array with only the approved loaders
 const loaderComponents = [TextCycleLoader];
 
 function EngagingLoader() {
@@ -16,10 +15,9 @@ function EngagingLoader() {
   }, []);
 
   return (
-    <div className="engaging-loader-wrapper">
+    <div className={styles.engagingLoaderWrapper}>
       {SelectedLoader && <SelectedLoader />}
     </div>
   );
 }
-
 export default EngagingLoader;

@@ -1,4 +1,4 @@
-// /frontend/src/pages/PlannerPage.jsx (Updated)
+// /frontend/src/pages/PlannerPage.jsx (Complete & Fixed)
 
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
@@ -16,7 +16,7 @@ import {
 import { showSerendipitySuggestionToast } from '../components/SerendipityToast';
 import { toast } from 'react-toastify';
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
-import '../App.css';
+import styles from './PlannerPage.module.css';
 
 const MAX_AUTOMATIC_SERENDIPITY_SUGGESTIONS = 2;
 const SERENDIPITY_FETCH_INTERVAL_MS = 5 * 60 * 1000;
@@ -25,7 +25,6 @@ function PlannerPage() {
     const { user } = useAuth();
     const { itineraryData, isLoading, error, generateItinerary, resetItinerary, setItineraryData } = useItinerary();
 
-    // UI & Interaction State
     const [originalFormData, setOriginalFormData] = useState(null);
     const [currentTripUuid, setCurrentTripUuid] = useState(null);
     const [tripStatus, setTripStatus] = useState("generated");
@@ -34,9 +33,8 @@ function PlannerPage() {
     const [excludedIds, setExcludedIds] = useState(new Set());
     const [activityDetailModalOpen, setActivityDetailModalOpen] = useState(false);
     const [selectedActivityForDetail, setSelectedActivityForDetail] = useState(null);
-    const [activeLoader, setActiveLoader] = useState(null); // 'generate' or 'surprise'
+    const [activeLoader, setActiveLoader] = useState(null);
 
-    // Serendipity AI Feature State
     const [aiSuggestionsDisabled, setAiSuggestionsDisabled] = useState(false);
     const [isFetchingSerendipity, setIsFetchingSerendipity] = useState(false);
     const [noMoreSerendipitySuggestions, setNoMoreSerendipitySuggestions] = useState(false);
@@ -44,12 +42,12 @@ function PlannerPage() {
     const [automaticSerendipityFetchCount, setAutomaticSerendipityFetchCount] = useState(0);
     const serendipityIntervalRef = useRef(null);
     
-    //useBodyScrollLock(activityDetailModalOpen);
+    useBodyScrollLock(activityDetailModalOpen);
 
     const isTripCompleted = useMemo(() => tripStatus === "completed", [tripStatus]);
 
     const handleGenerateItinerary = useCallback(async (formData, loaderType) => {
-        setActiveLoader(loaderType); // Set which button is loading
+        setActiveLoader(loaderType);
         resetItinerary();
         if (serendipityIntervalRef.current) clearInterval(serendipityIntervalRef.current);
         toast.dismiss('serendipity-toast');
@@ -74,7 +72,7 @@ function PlannerPage() {
                 setCurrentTripUuid(data.trip_uuid);
             }
         }
-        setActiveLoader(null); // Clear loading state
+        setActiveLoader(null);
     }, [generateItinerary, resetItinerary]);
 
     const handleRemoveAndRegenerate = useCallback(async (osmIdToRemove) => {
@@ -283,9 +281,8 @@ function PlannerPage() {
     
     return (
         <div className="App-container">
-            <main className="planner-content-card">
+            <main className={styles.plannerContentCard}>
                 
-                {/* --- FIX: Show form only when not loading and no data exists --- */}
                 {!isLoading && !itineraryData && (
                     <>
                         <h2>Let's Plan Your Getaway!</h2>
@@ -296,17 +293,15 @@ function PlannerPage() {
                     </>
                 )}
 
-                {/* --- FIX: Show skeleton only when loading --- */}
                 {isLoading && (
-                    <div className="display-section">
+                    <div className={styles.displaySection}>
                         <EngagingLoader />
                         <ItinerarySkeleton rows={5} message={loadingMessage} />
                     </div>
                 )}
                 
-                {/* --- FIX: Show itinerary data only when it exists --- */}
                 {itineraryData && (
-                    <div className="display-section">
+                    <div className={styles.displaySection}>
                         <ItineraryDisplay
                            itineraryData={itineraryData}
                            onRemove={handleRemoveAndRegenerate}
@@ -325,29 +320,32 @@ function PlannerPage() {
                     </div>
                 )}
 
-                {/* --- Error and Placeholder display --- */}
                 {error && !isLoading && (
-                   <div className="display-section">
-                       <div className="itinerary-display error">
+                   <div className={styles.displaySection}>
+                       <div className={styles.errorDisplay}>
                          <p>⚠️ {error}</p>
-                         <button onClick={handleResetPlanner} className='reset-button'>Clear & Reset</button>
+                         <button onClick={handleResetPlanner} className={styles.resetButton}>Clear & Reset</button>
                        </div>
                    </div>
                 )}
                 
                 {itineraryData && (
-                    <div style={{display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '25px', flexWrap: 'wrap'}}>
+                    <div className={styles.actionButtonContainer}>
                         {!isTripCompleted && (
                             <button 
                                 onClick={markCurrentTripComplete} 
-                                className='cta-button' 
+                                className='cta-button'
                                 style={{backgroundColor: '#2c7a7b', minWidth: '180px'}}
                                 disabled={isLoading || isRegenerating}
                             >
                                 🏁 Mark Trip as Done
                             </button>
                         )}
-                        <button onClick={handleResetPlanner} className='cta-button' style={{backgroundColor: '#718096', minWidth: '180px'}}>
+                        <button 
+                          onClick={handleResetPlanner} 
+                          className='cta-button'
+                          style={{backgroundColor: '#718096', minWidth: '180px'}}
+                        >
                             Reset & Plan New
                         </button>
                     </div>

@@ -1,0 +1,89 @@
+/* /frontend/src/pages/AccountPage.module.css (Updated) */
+
+.cardStyle {
+    background-color: var(--color-white);
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+    margin-bottom: 30px;
+}
+.cardStyle h2 {
+    font-family: var(--font-heading);
+    color: var(--color-dark-blue);
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 10px;
+}
+.profileDetail { margin-bottom: 10px; font-size: 1rem; }
+.profileDetail strong { color: var(--color-text-dark); margin-right: 8px; }
+.profileDetail span { color: var(--color-text-secondary); }
+
+.compactForm label {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    color: var(--color-mid-blue);
+}
+.compactForm input { padding: 10px 12px; }
+.compactForm button,
+.deleteButtonInitiate,
+.deleteButtonConfirm,
+.cancelButton {
+    width: auto;
+    padding: 10px 20px;
+    font-size: 0.95rem;
+}
+
+.dangerZone {
+    border: 1px solid var(--color-error-border);
+    background-color: #fff5f5;
+    padding: 20px 30px; /* <<< Reduced padding */
+}
+.dangerZone h2 {
+    color: var(--color-error-text);
+    border-bottom-color: var(--color-error-border);
+}
+.dangerZone p {
+    font-size: 0.9rem;
+    color: #9b2c2c;
+    margin-top: 0;
+}
+.deleteButtonInitiate {
+    background-color: #e53e3e; color: white; border: none; cursor: pointer;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-weight: 700;
+    margin-top: 10px; /* <<< Added margin */
+}
+.deleteButtonInitiate:hover { background-color: #c53030; }
+.deleteButtonConfirm {
+    background-color: #e53e3e;
+    color: white;
+    border: none;
+    flex-grow: 1;
+    cursor: pointer;
+}
+.deleteButtonConfirm:hover { background-color: #c53030; }
+.cancelButton {
+    background-color: var(--color-border);
+    color: var(--color-text-dark);
+    border-color: var(--color-border);
+    flex-grow: 1;
+    cursor: pointer;
+}
+.cancelButton:hover { background-color: #b0bec5; }
+
+.contactButton {
+    display: inline-block;
+    text-decoration: none;
+    background-color: var(--color-mid-blue);
+    color: var(--color-white);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    transition: background-color 0.2s ease;
+    margin-top: 10px;
+}
+.contactButton:hover {
+    background-color: var(--color-dark-blue);
+}

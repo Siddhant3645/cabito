@@ -1,0 +1,13 @@
+/* /frontend/src/components/EngagingLoader.module.css */
+
+.engagingLoaderWrapper {
+  padding: 20px;
+  background-color: var(--color-background-light);
+  border-radius: 12px;
+  border: 1px dashed var(--color-border);
+  min-height: 110px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}

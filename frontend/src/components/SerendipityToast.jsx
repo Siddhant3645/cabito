@@ -1,9 +1,8 @@
-// /frontend/src/components/SerendipityToast.jsx
-// v1.2 - Displays time extension information.
+// /frontend/src/components/SerendipityToast.jsx (Refactored)
 
 import React from 'react';
 import { toast } from 'react-toastify';
-import '../App.css';
+import styles from './SerendipityToast.module.css';
 
 const CustomSerendipityToast = ({
   closeToast,
@@ -17,7 +16,6 @@ const CustomSerendipityToast = ({
     return null;
   }
 
-  // +++ NEW: Logic to create the time extension message +++
   let timeExtensionMessage = null;
   if (suggestion.time_extension_minutes && suggestion.time_extension_minutes > 0) {
     const minutes = Math.round(suggestion.time_extension_minutes);
@@ -25,14 +23,14 @@ const CustomSerendipityToast = ({
   }
 
   return (
-    <div className="serendipity-toast-content">
+    <div className={styles.toastContent}>
       <h4>{suggestion.actionable_text || "✨ Here's a quick idea!"}</h4>
-      <div className="suggested-activity-details">
+      <div className={styles.suggestedActivityDetails}>
         <p>
           <strong>Consider:</strong> {suggestion.suggested_activity.activity}
           {suggestion.suggested_activity.ai_insight && (
             <span
-              className="ai-insight-badge"
+              className={styles.aiInsightBadge}
               title={`Cabito Tip: ${suggestion.suggested_activity.ai_insight}`}
             > ✨</span>
           )}
@@ -43,18 +41,17 @@ const CustomSerendipityToast = ({
         </p>
       </div>
 
-      {/* +++ NEW: Display the time extension message if it exists +++ */}
       {timeExtensionMessage && (
-        <p className="serendipity-toast-note">{timeExtensionMessage}</p>
+        <p className={styles.toastNote}>{timeExtensionMessage}</p>
       )}
 
-      <div className="serendipity-toast-actions">
+      <div className={styles.toastActions}>
         <button
           onClick={() => {
             onAccept(suggestion);
             if(closeToast) closeToast();
           }}
-          className="toast-button accept"
+          className={`${styles.toastButton} ${styles.accept}`}
         >
           Accept Idea
         </button>
@@ -62,7 +59,7 @@ const CustomSerendipityToast = ({
           onClick={() => {
             onRejectAndTryNext(suggestion);
           }}
-          className="toast-button next"
+          className={`${styles.toastButton} ${styles.next}`}
         >
           Next Idea 💡
         </button>
@@ -71,7 +68,7 @@ const CustomSerendipityToast = ({
             onCancelAISuggestions();
             if(closeToast) closeToast();
           }}
-          className="toast-button cancel-ai"
+          className={`${styles.toastButton} ${styles.cancelAi}`}
         >
           Turn Off
         </button>
@@ -107,13 +104,13 @@ export const showSerendipitySuggestionToast = (
     {
       toastId: toastId,
       position: "top-right",
-      autoClose: 20000, // Increased time to allow user to read the new info
+      autoClose: 20000,
       hideProgressBar: false,
       closeOnClick: false,
       pauseOnFocusLoss: true,
       pauseOnHover: true,
       draggable: true,
-      className: 'serendipity-custom-toast',
+      className: 'serendipity-custom-toast', // This global class is targeted by the module
     }
   );
   return toastId;

@@ -1,11 +1,11 @@
-// /frontend/src/pages/LandingPage.jsx
+// /frontend/src/pages/LandingPage.jsx (Complete & Refactored)
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
-import '../App.css'; 
+import styles from './LandingPage.module.css';
 
-// +++ Animation variants for container elements +++
 const sectionVariants = {
     hidden: { opacity: 0, y: 30 },
     show: {
@@ -20,32 +20,30 @@ const sectionVariants = {
     },
 };
 
-// +++ Animation variants for child grid/list items +++
 const itemVariants = {
     hidden: { y: 20, opacity: 0 },
     show: { y: 0, opacity: 1, transition: { duration: 0.5, ease: "easeOut" } },
 };
 
-// Updated components to be animatable
 const FeatureItem = ({ icon, title, children }) => (
-    <motion.div className="feature-item" variants={itemVariants}>
-        <div className="feature-icon">{icon}</div>
+    <motion.div className={styles.featureItem} variants={itemVariants}>
+        <div className={styles.featureIcon}>{icon}</div>
         <h3>{title}</h3>
         <p>{children}</p>
     </motion.div>
 );
 
 const StepItem = ({ number, title, children }) => (
-    <motion.div className="step-item" variants={itemVariants}>
-        <div className="step-number-visual">{number}</div>
+    <motion.div className={styles.stepItem} variants={itemVariants}>
+        <div className={styles.stepNumberVisual}>{number}</div>
         <h3>{title}</h3>
         <p>{children}</p>
     </motion.div>
 );
 
 const ValuePointItem = ({ icon, title, children }) => (
-    <motion.div className="value-point" variants={itemVariants}>
-        <div className="value-icon">{icon}</div>
+    <motion.div className={styles.valuePoint} variants={itemVariants}>
+        <div className={styles.valueIcon}>{icon}</div>
         <h3>{title}</h3>
         <p>{children}</p>
     </motion.div>
@@ -61,12 +59,12 @@ function LandingPage() {
     };
 
   return (
-    <div className="landing-page-wrapper">
+    <div className={styles.landingPageWrapper}>
 
-      <section className="App-hero">
-        <div className="hero-content">
+      <section className={styles.hero}>
+        <div className={styles.heroContent}>
           <motion.h1 
-            className="hero-brand-title"
+            className={styles.heroBrandTitle}
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -74,7 +72,7 @@ function LandingPage() {
             Cabito
           </motion.h1>
           <motion.p 
-            className="App-subtitle"
+            className={styles.heroSubtitle}
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
@@ -83,7 +81,7 @@ function LandingPage() {
           </motion.p>
           <motion.button 
             onClick={handlePlanClick} 
-            className="cta-button large-cta hero-cta"
+            className={`${styles.ctaButton} ${styles.largeCta}`}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.5, type: 'spring', stiffness: 120 }}
@@ -94,18 +92,18 @@ function LandingPage() {
       </section>
 
       <motion.section 
-        className="info-section features-section"
+        className={`${styles.infoSection} ${styles.featuresSection}`}
         variants={sectionVariants}
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, amount: 0.2 }}
       >
-        <div className="section-container">
+        <div className={styles.sectionContainer}>
           <h2>Stop Searching, Start Exploring</h2>
-          <p className="section-intro">
+          <p className={styles.sectionIntro}>
             Cabito is for busy travelers and spontaneous explorers. Have a long layover or a free afternoon? Discover the city's best, effortlessly.
           </p>
-          <div className="features-grid">
+          <div className={styles.featuresGrid}>
             <FeatureItem icon="🗺️" title="Instant Itineraries">
               Intelligent plans optimized for your specific time window, budget, and unique interests.
             </FeatureItem>
@@ -123,15 +121,15 @@ function LandingPage() {
       </motion.section>
 
       <motion.section 
-        className="info-section how-it-works-section"
+        className={`${styles.infoSection} ${styles.howItWorksSection}`}
         variants={sectionVariants}
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, amount: 0.2 }}
       >
-         <div className="section-container">
+         <div className={styles.sectionContainer}>
             <h2>Get Your Custom Plan in 3 Simple Steps</h2>
-            <div className="steps-grid">
+            <div className={styles.stepsGrid}>
                 <StepItem number="1" title="Define Your Window">
                     Enter your destination, available date & time, start/end locations, and budget.
                 </StepItem>
@@ -146,15 +144,15 @@ function LandingPage() {
       </motion.section>
 
       <motion.section 
-        className="info-section value-prop-section"
+        className={`${styles.infoSection} ${styles.valuePropSection}`}
         variants={sectionVariants}
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, amount: 0.2 }}
       >
-        <div className="section-container">
+        <div className={styles.sectionContainer}>
           <h2>Why Choose Cabito?</h2>
-          <div className="value-points-grid">
+          <div className={styles.valuePointsGrid}>
             <ValuePointItem icon="⏳" title="Maximize Short Stays">
               Perfect for layovers, business trip gaps, or any few free hours. No more wasted time!
             </ValuePointItem>
@@ -168,10 +166,10 @@ function LandingPage() {
         </div>
       </motion.section>
 
-      <section className="info-section final-cta-section">
-        <div className="section-container">
+      <section className={`${styles.infoSection} ${styles.finalCtaSection}`}>
+        <div className={styles.sectionContainer}>
           <motion.h3 
-            className="final-cta-heading"
+            className={styles.finalCtaHeading}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.5 }}
@@ -181,7 +179,7 @@ function LandingPage() {
           </motion.h3>
           <motion.button 
             onClick={handlePlanClick} 
-            className="cta-button large-cta"
+            className={`${styles.ctaButton} ${styles.largeCta}`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >

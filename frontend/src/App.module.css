@@ -1,0 +1,46 @@
+/* /frontend/src/App.module.css (Complete) */
+
+.footer {
+    margin-top: auto;
+    padding: 30px 20px;
+    text-align: center;
+    font-size: 0.9em;
+    color: var(--color-light-blue-gray);
+    background-color: var(--color-dark-blue);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.copyright {
+    color: var(--color-light-blue-gray);
+    font-size: 0.85rem;
+}
+
+.footerLinks {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.footerLinks a {
+    color: var(--color-mid-blue);
+    text-decoration: none;
+    padding: 0 10px;
+    position: relative;
+    transition: color 0.2s ease;
+}
+
+.footerLinks a:not(:last-child)::after {
+    content: '|';
+    position: absolute;
+    right: -10px;
+    color: var(--color-text-secondary);
+}
+
+
+.footerLinks a:hover {
+    color: var(--color-white);
+}

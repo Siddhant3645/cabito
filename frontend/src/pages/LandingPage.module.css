@@ -1,0 +1,114 @@
+/* /frontend/src/pages/LandingPage.module.css (Updated with Media Queries) */
+
+.hero {
+  height: 60vh; min-height: 450px;
+  background-image: linear-gradient(rgba(26, 43, 69, 0.6), rgba(26, 43, 69, 0.4)), url('/hero-background.jpg');
+  background-size: cover; background-position: center center;
+  display: flex; flex-direction: column; justify-content: center;
+  align-items: center; text-align: center; color: var(--color-white);
+  padding: 20px; margin-bottom: -80px;
+  position: relative; z-index: 1;
+}
+.heroContent { max-width: 750px; }
+.heroBrandTitle {
+  font-family: var(--font-heading); font-weight: 800; font-size: 4.5rem;
+  margin: 0; text-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+.heroSubtitle {
+  font-size: 1.5rem; color: rgba(255, 255, 255, 0.95);
+  margin: 10px auto 30px auto; font-family: var(--font-body);
+  font-weight: 400; letter-spacing: 1px;
+}
+.ctaButton {
+  background-color: var(--color-white); color: var(--color-dark-blue);
+  font-size: 1.2rem; padding: 16px 40px; margin-top: 20px;
+  font-weight: 700; border-radius: 50px; border: none;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.ctaButton:hover {
+  background-color: var(--color-light-blue-gray);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+}
+
+.infoSection { padding: 60px 0; }
+.infoSection:nth-of-type(even) { background-color: var(--color-white); }
+.featuresSection { padding-top: 140px; }
+.sectionContainer { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+.infoSection h2 { text-align: center; font-size: 2.2rem; margin-top: 0; margin-bottom: 20px; color: var(--color-dark-blue); }
+.sectionIntro { text-align: center; max-width: 700px; margin: 0 auto 50px auto; color: var(--color-text-secondary); font-size: 1.1rem; line-height: 1.7; }
+.featuresGrid { display: grid; grid-template-columns: 1fr; gap: 30px; text-align: center; margin-top: 40px; }
+.featureItem { padding: 15px; }
+.featureIcon { font-size: 2.8rem; display: block; margin-bottom: 18px; color: var(--color-accent-focus); line-height: 1; }
+.featureItem h3 { font-size: 1.3rem; margin-bottom: 8px; color: var(--color-dark-blue); font-family: var(--font-heading); font-weight: 700; }
+.featureItem p { font-size: 0.95rem; line-height: 1.5; color: var(--color-text-secondary); max-width: none; margin: 0; }
+.howItWorksSection { background-color: var(--color-background-light); padding-bottom: 20px; }
+.howItWorksSection h2 { margin-bottom: 40px; }
+.stepsGrid { display: grid; grid-template-columns: 1fr; gap: 40px; text-align: center; margin-top: 40px; }
+.stepItem { padding: 15px; }
+.stepNumberVisual { display: inline-flex; justify-content: center; align-items: center; width: 50px; height: 50px; border-radius: 50%; background-color: var(--color-mid-blue); color: var(--color-white); font-family: var(--font-heading); font-weight: 700; margin-bottom: 20px; font-size: 1.4rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+.stepItem h3 { font-size: 1.3rem; margin-bottom: 8px; font-family: var(--font-heading); font-weight: 700; color: var(--color-dark-blue); }
+.stepItem p { font-size: 0.95rem; line-height: 1.5; color: var(--color-text-secondary); max-width: none; margin: 0; }
+.valuePropSection { background-color: var(--color-white); padding: 60px 0; }
+.valuePropSection h2 { text-align: center; font-size: 2.2rem; margin-top: 0; margin-bottom: 50px; color: var(--color-dark-blue); }
+.valuePointsGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; max-width: 900px; margin: 0 auto; }
+.valuePoint { text-align: center; padding: 20px; background-color: var(--color-background-light); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); display: flex; flex-direction: column; align-items: center; }
+.valueIcon { font-size: 2.8rem; margin-bottom: 20px; color: var(--color-accent-focus); line-height: 1; }
+.valuePoint h3 { font-size: 1.3rem; font-family: var(--font-heading); font-weight: 700; margin-bottom: 10px; color: var(--color-dark-blue); min-height: 3.2em;  display: flex; align-items: center; justify-content: center; }
+.valuePoint p { font-size: 0.95rem; color: var(--color-text-secondary); line-height: 1.6; flex-grow: 1; }
+.finalCtaSection { background-color: var(--color-background-light); padding: 70px 20px; text-align: center; }
+.finalCtaHeading { font-family: var(--font-heading); font-size: 1.8rem; color: var(--color-dark-blue); margin-top: 0; margin-bottom: 30px; font-weight: 700; }
+.largeCta {
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    background-color: var(--color-dark-blue);
+    color: var(--color-white);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.largeCta:hover {
+    background-color: var(--color-mid-blue);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+.largeCta:active {
+    transform: translateY(0px);
+}
+
+/* --- Media Queries --- */
+@media (min-width: 600px) { .featuresGrid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 900px) { .featuresGrid { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 768px) { .stepsGrid { grid-template-columns: repeat(3, 1fr); } }
+
+@media (max-width: 992px) {
+    .featuresGrid { grid-template-columns: repeat(2, 1fr); }
+    .valuePointsGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .hero { height: 45vh; min-height: 300px; margin-bottom: -50px; }
+  .heroContent h1 { font-size: 2.8rem; } .hero .heroSubtitle { font-size: 1.1rem; }
+  .stepsGrid { grid-template-columns: 1fr; }
+  .stepItem { margin-bottom: 30px; } .stepItem:last-child { margin-bottom: 0; }
+  .infoSection h2 { font-size: 1.8rem; }
+  .valuePointsGrid { grid-template-columns: 1fr; gap: 25px; max-width: 450px; }
+  .valuePropSection h2 { font-size: 2rem; margin-bottom: 40px; }
+  .finalCtaHeading { font-size: 1.6rem; }
+  .largeCta { padding: 12px 30px; font-size: 1.1rem; }
+}
+
+@media (max-width: 480px) {
+  .hero { height: 40vh; min-height: 250px; margin-bottom: -40px; }
+  .heroContent h1 { font-size: 2.4rem; }
+  .infoSection { padding: 40px 0; }
+  .featuresGrid { grid-template-columns: 1fr; }
+  .valuePropSection h2 { font-size: 1.8rem; }
+  .valuePoint h3 { font-size: 1.2rem; }
+  .valuePoint p { font-size: 0.9rem; }
+}

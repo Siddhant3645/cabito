@@ -1,0 +1,272 @@
+/* /frontend/src/components/ItineraryDisplay.module.css (Complete) */
+
+.itineraryDisplay {
+    margin: 0 auto;
+    width: 100%;
+}
+
+.itineraryDisplayBox {
+  padding: 25px;
+  background-color: var(--color-white);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.customHeading {
+  background-color: var(--color-notes-bg);
+  border-left: 5px solid var(--color-notes-border);
+  color: var(--color-dark-blue);
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-top: 0;
+  margin-bottom: 25px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+}
+
+.customHeading h3 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  line-height: 1.4;
+}
+
+.weatherDisplayBox {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background-color: var(--color-background-light);
+  border: 1px solid var(--color-input-border);
+  border-left: 5px solid var(--color-mid-blue);
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  font-family: var(--font-body);
+  color: var(--color-text-dark);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.weatherColPrimary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 0 1 auto;
+  padding-right: 15px;
+  border-right: 1px solid var(--color-border);
+}
+.weatherMainIcon {
+  font-size: 2.8rem;
+  line-height: 1;
+  color: var(--color-dark-blue);
+  flex-shrink: 0;
+}
+.weatherPrimaryText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+}
+.weatherTemp { font-size: 1.6rem; font-weight: 700; }
+.weatherConditionText {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: baseline;
+}
+.dayNightIndicator { font-size: 0.85em; margin-left: 5px; opacity: 0.8; }
+.weatherFeelsLike { font-size: 0.85rem; color: var(--color-text-secondary); font-style: italic; }
+.weatherColAiSentence { flex: 1 1 50%; min-width: 0; padding: 0 15px; text-align: center; display: flex; align-items: center; }
+.aiWeatherSentence { font-size: 1em; color: var(--color-mid-blue); margin: 0; line-height: 1.5; font-style: italic; width: 100%; }
+.aiWeatherSentence em { font-style: normal; }
+.weatherColExtras { flex: 0 0 auto; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding-left: 15px; }
+.weatherExtras span { display: flex; align-items: center; font-size: 1rem; color: var(--color-text-secondary); white-space: nowrap; }
+
+.itinerarySummaryBox {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+    background-color: var(--color-background-light);
+    padding: 15px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--color-input-border);
+    border-left: 5px solid var(--color-notes-border);
+    margin-bottom: 25px;
+}
+.summaryItem { display: flex; flex-direction: column; gap: 4px; word-break: break-word; }
+.summaryLabel { font-size: 0.85rem; font-weight: 700; color: var(--color-mid-blue); text-transform: uppercase; letter-spacing: 0.5px; }
+.summaryValue { font-size: 1rem; font-weight: 400; color: var(--color-text-dark); }
+
+
+.itineraryMapAndTableGrid {
+    display: grid;
+    grid-template-rows: 0fr 1fr;
+    transition: grid-template-rows 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+    margin-top: 20px;
+    position: relative; 
+}
+
+.itineraryMapAndTableGrid.mapIsVisible {
+    grid-template-rows: 33vh 1fr;
+}
+
+.mapPeekContainerTop {
+    min-height: 0;
+    overflow: hidden;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    background-color: var(--color-background-light);
+}
+
+.mapToggleButtonTopCenter {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.mapToggleButtonTopCenter:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+    border-color: var(--color-mid-blue);
+}
+
+.itineraryMapAndTableGrid.mapIsVisible .mapToggleButtonTopCenter {
+    top: 33vh;
+}
+
+.itineraryTableContainer {
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    overflow: hidden;
+    border-left: 5px solid var(--color-notes-border);
+    position: relative;
+    z-index: 5;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: border-radius 0.5s cubic-bezier(0.77, 0, 0.175, 1), box-shadow 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.itineraryMapAndTableGrid.mapIsVisible .itineraryTableContainer {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    box-shadow: 0 -20px 25px -8px rgba(45, 55, 72, 0.3);
+}
+
+.itineraryTable {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+.itineraryTable th, .itineraryTable td { 
+    padding: 14px 12px; 
+    text-align: left; 
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: middle;
+}
+.itineraryTable tbody tr:last-child td { border-bottom: none; }
+.itineraryTable tbody tr:hover { background-color: var(--color-table-hover); }
+.itineraryTable thead th { 
+    background-color: var(--color-background-light); 
+    border-bottom-width: 2px; 
+    font-size: 0.9em; 
+    color: var(--color-text-secondary); 
+    padding: 10px 12px;
+    white-space: normal;
+}
+.itineraryTable tfoot td { font-weight: 700; background-color: var(--color-background-light); border-top: 2px solid var(--color-border); text-align: right; padding-right: 12px; }
+
+.colStatus { width: 5%; text-align: center; }
+.colActivity { width: 35%; word-break: break-word; }
+.colType { width: 10%; text-align: center; }
+.colStart, .colEnd { width: 11%; }
+.colDuration { width: 9%; text-align: right; }
+.colCost { width: 11%; text-align: right; }
+.colAction { width: 8%; text-align: center; }
+
+.timeCell, .durationCell { color: var(--color-text-secondary); font-size: 0.88rem; white-space: nowrap; }
+.statusCell input[type="checkbox"] { cursor: pointer; transform: scale(1.2); margin-top: 2px; accent-color: var(--color-mid-blue); }
+.actionCell { text-align: center; vertical-align: middle; padding-top: 8px; padding-bottom: 8px; }
+
+.removeButton { background: none; border: 1px solid transparent; padding: 4px 6px; margin: 0; cursor: pointer; font-size: 0.9em; opacity: 0.6; transition: all 0.2s ease; border-radius: 4px; line-height: 1; color: #555; }
+.removeButton:hover:not([disabled]) { opacity: 1; background-color: #fee2e2; border-color: #fca5a5; color: #b91c1c; transform: scale(1.05); }
+.removeButton:disabled { cursor: not-allowed !important; opacity: 0.3 !important; background: none !important; transform: none !important; }
+
+.activityContainer { position: relative; display: inline-block; }
+.customTooltip {
+  position: absolute; bottom: 115%; left: 0; transform: none; background-color: var(--color-dark-blue);
+  color: var(--color-white); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem;
+  line-height: 1.4; white-space: normal; width: 250px; max-width: max-content; z-index: 20;
+  opacity: 0; visibility: hidden; transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+  pointer-events: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2); text-align: left;
+}
+.customTooltip::after {
+  content: ''; position: absolute; top: 100%; left: 15px; margin-left: -5px;
+  border-width: 5px; border-style: solid; border-color: var(--color-dark-blue) transparent transparent transparent;
+}
+.activityContainer:hover .customTooltip { opacity: 1; visibility: visible; }
+
+.legTypeActivity { transition: all 0.2s ease-in-out; }
+.legTypeActivity:hover { cursor: pointer; transform: scale(1.01); box-shadow: 0 4px 15px rgba(0,0,0,0.1); z-index: 10; background-color: var(--color-white); }
+.legTypeActivity.completedItem { background-color: var(--color-completed-bg); }
+.legTypeActivity.completedItem:nth-of-type(even) { background-color: var(--color-completed-bg-even); }
+.legTypeActivity.completedItem td { opacity: 0.7; }
+.legTypeActivity.completedItem td .activityName { text-decoration: line-through wavy var(--color-completed-text); color: var(--color-completed-text); font-style: italic; }
+.legTypeActivity.completedItem td.statusCell, .legTypeActivity.completedItem td.actionCell { opacity: 1; }
+.legTypeActivity.completedItem td.actionCell .removeButton { opacity: 0.5; }
+
+.progressBarContainer { margin-top: 25px; }
+
+@media (max-width: 900px) {
+  .itinerarySummaryBox {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .weatherDisplayBox {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  .weatherColPrimary {
+    flex-direction: column;
+    align-items: center;
+    border-right: none;
+    padding-right: 0;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .weatherColAiSentence {
+    padding: 0 5px;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .weatherColExtras {
+    border-left: none;
+    padding-left: 0;
+    align-items: center;
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mobileHidden {
+    display: none !important;
+  }
+}

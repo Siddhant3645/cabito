@@ -1,0 +1,45 @@
+/* /frontend/src/pages/LegalPages.css */
+
+.legal-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px 40px;
+    background-color: var(--color-background-card);
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-dark);
+}
+
+.legal-container h1 {
+    font-family: var(--font-heading);
+    color: var(--color-dark-blue);
+    border-bottom: 2px solid var(--color-mid-blue);
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+}
+
+.legal-container h2 {
+    font-family: var(--font-heading);
+    color: var(--color-dark-blue);
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+.legal-container p, .legal-container li {
+    line-height: 1.8;
+    color: var(--color-text-secondary);
+}
+
+.legal-container a {
+    color: var(--color-accent-focus);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.legal-container a:hover {
+    text-decoration: underline;
+}
+
+.legal-container ul {
+    padding-left: 25px;
+}

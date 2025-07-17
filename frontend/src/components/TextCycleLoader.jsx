@@ -1,7 +1,7 @@
-// /frontend/src/components/TextCycleLoader.jsx
+// /frontend/src/components/TextCycleLoader.jsx (Refactored)
 
 import React, { useState, useEffect } from 'react';
-import '../App.css';
+import styles from './TextCycleLoader.module.css';
 
 const loadingMessages = [
   "Consulting ancient maps...",
@@ -28,12 +28,11 @@ const TextCycleLoader = () => {
   }, []);
 
   return (
-    <div className="loader-container">
-      <div key={message} className="loader-text">
+    <div className={styles.loaderContainer}>
+      <div key={message} className={styles.loaderText}>
         {message}
       </div>
     </div>
   );
 };
-
 export default TextCycleLoader;

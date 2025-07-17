@@ -1,0 +1,16 @@
+/* /frontend/src/components/TextCycleLoader.module.css */
+
+.loaderContainer {
+  text-align: center;
+  color: var(--color-text-dark);
+  font-family: var(--font-heading);
+  animation: fadeIn 0.5s ease-out;
+}
+
+.loaderText {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-style: italic;
+    color: var(--color-mid-blue);
+    animation: fadeInOut 2.5s ease-in-out infinite;
+}

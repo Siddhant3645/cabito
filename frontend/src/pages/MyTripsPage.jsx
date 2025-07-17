@@ -1,4 +1,4 @@
-// /frontend/src/pages/MyTripsPage.jsx (Updated with Pagination)
+// /frontend/src/pages/MyTripsPage.jsx (Complete & Corrected)
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
@@ -6,8 +6,8 @@ import { apiListUserTrips, apiGenerateMemorySnapshot } from '../services/api';
 import { toast } from 'react-toastify';
 import ItineraryDisplay from '../components/ItineraryDisplay';
 import ActivityDetailModal from '../components/ActivityDetailModal';
-import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
-import '../App.css';
+//import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
+import styles from './MyTripsPage.module.css';
 
 const formatDate = (isoString) => {
     if (!isoString) return 'N/A';
@@ -26,7 +26,7 @@ const PaginationControls = ({ currentPage, totalPages, onPageChange }) => {
     if (totalPages <= 1) return null;
 
     return (
-        <div className="pagination-controls">
+        <div className={styles.paginationControls}>
             <button onClick={() => onPageChange(currentPage - 1)} disabled={currentPage <= 1}>
                 &larr; Previous
             </button>
@@ -56,7 +56,7 @@ function MyTripsPage() {
     const [totalPages, setTotalPages] = useState(1);
     const tripsPerPage = 10;
 
-    useBodyScrollLock(isItineraryModalOpen || isMemoryModalOpen || activityDetailModalOpen);
+    //useBodyScrollLock(isItineraryModalOpen || isMemoryModalOpen || activityDetailModalOpen);
 
     const fetchTrips = useCallback(async (page) => {
         setIsLoading(true);
@@ -154,40 +154,47 @@ function MyTripsPage() {
     }
 
     return (
-        <div className="App-container my-trips-page">
+        <div className={`App-container ${styles.myTripsPage}`}>
             <h1 style={{ textAlign: 'center', color: 'var(--color-dark-blue)', fontFamily: 'var(--font-heading)', marginBottom: '30px' }}>
               My Trips
             </h1>
 
             {trips.length > 0 ? (
                 <>
-                    <div className="trips-grid">
-                        {trips.map(trip => (
-                            <div key={trip.trip_uuid} className="trip-card">
-                                <h3 className="trip-card-title">{trip.trip_title || trip.location_display_name || 'My Trip'}</h3>
-                                <p className="trip-card-dates">
-                                    {formatDate(trip.trip_start_datetime_utc)}
-                                </p>
-                                <div className={`trip-card-status status-${trip.status}`}>
-                                    Status: <span>{trip.status}</span>
+                    <div className={styles.tripsGrid}>
+                        {trips.map(trip => {
+                            const statusClass = `status${trip.status.charAt(0).toUpperCase() + trip.status.slice(1)}`;
+                            return (
+                                <div key={trip.trip_uuid} className={styles.tripCard}>
+                                    <h3 className={styles.tripCardTitle}>{trip.trip_title || trip.location_display_name || 'My Trip'}</h3>
+                                    <p className={styles.tripCardDates}>
+                                        {formatDate(trip.trip_start_datetime_utc)}
+                                    </p>
+                                    <div className={`${styles.tripCardStatus} ${styles[statusClass] || ''}`}>
+                                        Status: <span>{trip.status}</span>
+                                    </div>
+                                    <div className={styles.tripCardActions}>
+                                        <button onClick={() => handleViewItinerary(trip)} className={styles.tripActionButton}>
+                                            View Itinerary
+                                        </button>
+                                        <button 
+                                          onClick={() => handleGenerateMemory(trip)} 
+                                          className={`${styles.tripActionButton} ${styles.memory}`} 
+                                          disabled={isGeneratingMemory && selectedTripForMemory?.trip_uuid === trip.trip_uuid}
+                                        >
+                                            {isGeneratingMemory && selectedTripForMemory?.trip_uuid === trip.trip_uuid ? 'Creating...' : (trip.memory_snapshot_text ? 'View Memory' : '✨ Create Memory')}
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="trip-card-actions">
-                                    <button onClick={() => handleViewItinerary(trip)} className="trip-action-button">
-                                        View Itinerary
-                                    </button>
-                                    <button onClick={() => handleGenerateMemory(trip)} className="trip-action-button memory" disabled={isGeneratingMemory && selectedTripForMemory?.trip_uuid === trip.trip_uuid}>
-                                        {isGeneratingMemory && selectedTripForMemory?.trip_uuid === trip.trip_uuid ? 'Creating...' : (trip.memory_snapshot_text ? 'View Memory' : '✨ Create Memory')}
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
+                            )
+                        })}
                     </div>
                     <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
                 </>
             ) : (
-                <div className="itinerary-display placeholder">
+                <div className={styles.placeholder}>
                     <p>You haven't generated any trips yet!</p>
-                    <Link to="/planner" className="cta-button" style={{marginTop: '15px'}}>Plan Your First Trip</Link>
+                    <Link to="/planner" className={styles.ctaButton} style={{marginTop: '15px'}}>Plan Your First Trip</Link>
                 </div>
             )}
 

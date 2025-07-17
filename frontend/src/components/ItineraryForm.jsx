@@ -1,12 +1,13 @@
-// /frontend/src/components/ItineraryForm.jsx (Complete File)
+// /frontend/src/components/ItineraryForm.jsx (Corrected)
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { toast } from 'react-toastify';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-// import { useGoogleMaps } from '../context/GoogleMapsContext'; // <<< COMMENTED OUT
+// import { useGoogleMaps } from '../context/GoogleMapsContext'; // <<< THIS LINE IS NOW CORRECTLY COMMENTED OUT
 import { useDebounce } from '../hooks/useDebounce';
 import { apiNominatimSearch, apiReverseGeocode } from '../services/api';
+import styles from './ItineraryForm.module.css';
 
 const calculateDurationString = (startStr, endStr) => {
     if (!startStr || !endStr) return "";
@@ -118,11 +119,14 @@ function ItineraryForm({ onSubmit, activeLoader }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [searchWrapperRef]);
 
-  /*
-  // --- OLD GOOGLE AUTOCOMPLETE EFFECT (COMMENTED OUT) ---
-  const { google, isLoaded } = useGoogleMaps();
+  
+  // --- OLD GOOGLE AUTOCOMPLETE EFFECT (PRESERVED FOR FUTURE USE) ---
+  // const { google, isLoaded } = useGoogleMaps(); // This hook would be used here
   const autocompleteRef = useRef(null);
   useEffect(() => {
+    // This effect is disabled, but preserved.
+    // To re-enable, uncomment the useGoogleMaps import and the hook call above.
+    /*
     if (!isLoaded || !google || !locationInputRef.current || autocompleteRef.current) {
       return;
     }
@@ -146,8 +150,9 @@ function ItineraryForm({ onSubmit, activeLoader }) {
             setLatitude(null); setLongitude(null);
         }
     });
-  }, [isLoaded, google]);
-  */
+    */
+  }, [/* isLoaded, google */]); // Dependencies removed to prevent errors
+  
 
   const validateDates = useCallback(() => {
     setFormErrors(prevErrors => {
@@ -323,12 +328,12 @@ function ItineraryForm({ onSubmit, activeLoader }) {
   }).format(budget || 0);
 
   return (
-    <form onSubmit={handleSubmit} className="itinerary-form">
-        <div className="form-columns">
-            <div className="form-column form-column-left">
-                <div className={`form-group ${formErrors.location ? 'has-error' : ''}`} ref={searchWrapperRef}>
+    <form onSubmit={handleSubmit} className={styles.itineraryForm}>
+        <div className={styles.formColumns}>
+            <div className={`${styles.formColumn} ${styles.formColumnLeft}`}>
+                <div className={`${styles.formGroup} ${formErrors.location ? styles.hasError : ''}`} ref={searchWrapperRef}>
                     <label htmlFor="location-input">Where is your adventure? 📍</label>
-                    <div className="location-input-group" style={{ position: 'relative' }}>
+                    <div className={styles.locationInputGroup} style={{ position: 'relative' }}>
                         <input
                             type="text" id="location-input" name="location"
                             ref={locationInputRef} value={locationInputText}
@@ -336,7 +341,7 @@ function ItineraryForm({ onSubmit, activeLoader }) {
                             placeholder="Type city, address, or use 'Here'"
                             disabled={isFormDisabled} autoComplete="off"
                         />
-                        <button type="button" onClick={handleGetCurrentLocation} className="here-button" disabled={isFormDisabled || isLocating} title="Use current GPS location">
+                        <button type="button" onClick={handleGetCurrentLocation} className={styles.hereButton} disabled={isFormDisabled || isLocating} title="Use current GPS location">
                             {isLocating ? 'Locating...' : '📍 Here'}
                         </button>
                         {searchResults.length > 0 && (
@@ -353,12 +358,12 @@ function ItineraryForm({ onSubmit, activeLoader }) {
                             </ul>
                         )}
                     </div>
-                    {formErrors.location && <p className="inline-error-message">{formErrors.location}</p>}
+                    {formErrors.location && <p className={styles.inlineErrorMessage}>{formErrors.location}</p>}
                 </div>
 
-                <div className={`form-group ${formErrors.dateTime ? 'has-error' : ''}`}>
+                <div className={`${styles.formGroup} ${formErrors.dateTime ? styles.hasError : ''}`}>
                     <label htmlFor="startDateTime">When does your adventure begin? 🚀</label>
-                    <div className="datetime-input-group">
+                    <div className={styles.datetimeInputGroup}>
                         <DatePicker
                             ref={startDatePickerRef}
                             selected={startDate}
@@ -389,12 +394,12 @@ function ItineraryForm({ onSubmit, activeLoader }) {
                                 <CalendarContainerWithDoneButton {...props} pickerRef={startDatePickerRef} />
                             )}
                         />
-                        <button type="button" onClick={handleSetStartNow} className="now-button" title="Set start time to now" disabled={isFormDisabled}>Now</button>
+                        <button type="button" onClick={handleSetStartNow} className={styles.nowButton} title="Set start time to now" disabled={isFormDisabled}>Now</button>
                     </div>
                 </div>
-                <div className={`form-group ${formErrors.dateTime ? 'has-error' : ''}`}>
+                <div className={`${styles.formGroup} ${formErrors.dateTime ? styles.hasError : ''}`}>
                     <label htmlFor="endDateTime">And when must it conclude? ⏳</label>
-                     <div className="datetime-input-group">
+                     <div className={styles.datetimeInputGroup}>
                         <DatePicker
                             ref={endDatePickerRef}
                             selected={endDate}
@@ -423,64 +428,64 @@ function ItineraryForm({ onSubmit, activeLoader }) {
                         />
                     </div>
                 </div>
-                {formErrors.dateTime && <p className="inline-error-message date-time-error">{formErrors.dateTime}</p>}
+                {formErrors.dateTime && <p className={`${styles.inlineErrorMessage} ${styles.dateTimeError}`}>{formErrors.dateTime}</p>}
                 {(durationDisplay && !durationDisplay.toLowerCase().includes("invalid") && !durationDisplay.toLowerCase().includes("error")) && (
-                    <div className="duration-display-text"> Available Time: {durationDisplay} </div>
+                    <div className={styles.durationDisplayText}> Available Time: {durationDisplay} </div>
                 )}
 
-                <div className={`form-group`}>
+                <div className={`${styles.formGroup}`}>
                     <label htmlFor="budget">Budget:</label>
-                    <div className="budget-group-vertical">
-                        <div className="budget-group">
-                            <input type="number" id="budget" value={budget} onChange={handleBudgetChange} min="0" step="100" placeholder="e.g., 5000" required className="budget-input" disabled={isFormDisabled}/>
-                            <select id="currency" value={currency} onChange={(e) => setCurrency(e.target.value)} className="currency-select" title="Select currency" disabled={isFormDisabled}>
+                    <div className={styles.budgetGroupVertical}>
+                        <div className={styles.budgetGroup}>
+                            <input type="number" id="budget" value={budget} onChange={handleBudgetChange} min="0" step="100" placeholder="e.g., 5000" required className={styles.budgetInput} disabled={isFormDisabled}/>
+                            <select id="currency" value={currency} onChange={(e) => setCurrency(e.target.value)} className={styles.currencySelect} title="Select currency" disabled={isFormDisabled}>
                                 <option value="INR">INR ₹</option>
                             </select>
                         </div>
-                        <div className="budget-slider-container">
-                            <input type="range" id="budgetSlider" name="budgetSlider" min="0" max="50000" step="500" value={budget} onChange={handleBudgetChange} className="budget-slider" disabled={isFormDisabled}/>
-                            <span className="budget-display">{formattedBudget}</span>
+                        <div className={styles.budgetSliderContainer}>
+                            <input type="range" id="budgetSlider" name="budgetSlider" min="0" max="50000" step="500" value={budget} onChange={handleBudgetChange} className={styles.budgetSlider} disabled={isFormDisabled}/>
+                            <span className={styles.budgetDisplay}>{formattedBudget}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="form-column form-column-right">
-                <div className="preferences-wrapper">
-                    <label className="preferences-title-label">What kind of experiences interest you?</label>
-                    <fieldset className="preferences-group" style={{marginTop:'8px'}}>
-                        <div className="checkbox-option">
+            <div className={`${styles.formColumn} ${styles.formColumnRight}`}>
+                <div className={styles.preferencesWrapper}>
+                    <label className={styles.preferencesTitleLabel}>What kind of experiences interest you?</label>
+                    <fieldset className={styles.preferencesGroup} style={{marginTop:'8px'}}>
+                        <div className={styles.checkboxOption}>
                             <input type="checkbox" id="pref-foodie" name="foodie" checked={preferences.foodie} onChange={handlePreferenceChange} disabled={isFormDisabled}/>
                             <label htmlFor="pref-foodie">🍲 Taste Explorer (Food & Drinks)</label>
                         </div>
-                        <div className="checkbox-option">
+                        <div className={styles.checkboxOption}>
                             <input type="checkbox" id="pref-history" name="history" checked={preferences.history} onChange={handlePreferenceChange} disabled={isFormDisabled}/>
                             <label htmlFor="pref-history">🏛️ History Buff (Museums & Heritage)</label>
                         </div>
-                        <div className="checkbox-option">
+                        <div className={styles.checkboxOption}>
                             <input type="checkbox" id="pref-sights" name="sights" checked={preferences.sights} onChange={handlePreferenceChange} disabled={isFormDisabled}/>
                             <label htmlFor="pref-sights">📸 Iconic Views (Sightseeing & Vistas)</label>
                         </div>
-                        <div className="checkbox-option">
+                        <div className={styles.checkboxOption}>
                             <input type="checkbox" id="pref-shopping" name="shopping" checked={preferences.shopping} onChange={handlePreferenceChange} disabled={isFormDisabled}/>
                             <label htmlFor="pref-shopping">🛍️ Retail Therapy (Shopping)</label>
                         </div>
-                        <div className="checkbox-option">
+                        <div className={styles.checkboxOption}>
                             <input type="checkbox" id="pref-nightlife" name="nightlife" checked={preferences.nightlife} onChange={handlePreferenceChange} disabled={isFormDisabled}/>
                             <label htmlFor="pref-nightlife">🎉 After Dark (Nightlife & Vibes)</label>
                         </div>
-                        <div className="checkbox-option">
+                        <div className={styles.checkboxOption}>
                             <input type="checkbox" id="pref-park" name="park" checked={preferences.park} onChange={handlePreferenceChange} disabled={isFormDisabled}/>
                             <label htmlFor="pref-park">🌳 Nature Escape (Parks & Outdoors)</label>
                         </div>
-                        <div className="checkbox-option">
+                        <div className={styles.checkboxOption}>
                             <input type="checkbox" id="pref-religious" name="religious" checked={preferences.religious} onChange={handlePreferenceChange} disabled={isFormDisabled}/>
                             <label htmlFor="pref-religious">🛐 Spiritual Sites (Places of Worship)</label>
                         </div>
                     </fieldset>
                 </div>
 
-                <div className="form-group" style={{ marginTop: '2px', marginBottom: '15px' }}>
+                <div className={styles.formGroup} style={{ marginTop: '2px', marginBottom: '15px' }}>
                     <label htmlFor="customTripDescription" style={{
                         textAlign: 'left', width: '100%', fontWeight: 700,
                         color: 'var(--color-mid-blue)', fontSize: '1rem',
@@ -488,7 +493,7 @@ function ItineraryForm({ onSubmit, activeLoader }) {
                     }}>
                         Or, describe your ideal trip / specific interests:
                     </label>
-                    <div className="input-wrapper" style={{marginTop: '-5px'}}>
+                    <div className={styles.inputWrapper} style={{marginTop: '-5px'}}>
                         <textarea
                             id="customTripDescription"
                             name="customTripDescription"
@@ -521,18 +526,18 @@ function ItineraryForm({ onSubmit, activeLoader }) {
         }}>
             <button 
                 type="submit" 
-                className="submit-button" 
+                className={styles.submitButton} 
                 disabled={isFormDisabled}
             >
-                {activeLoader === 'generate' ? ( <> Generating... <span className="spinner-icon"></span> </> ) : ( 'Generate Itinerary' )}
+                {activeLoader === 'generate' ? ( <> Generating... <span className={styles.spinnerIcon}></span> </> ) : ( 'Generate Itinerary' )}
             </button>
             <button 
                 type="button" 
                 onClick={handleSurpriseMe} 
-                className="surprise-me-button" 
+                className={styles.surpriseMeButton} 
                 disabled={isFormDisabled}
             >
-                 {activeLoader === 'surprise' ? ( <> Generating... <span className="spinner-icon"></span> </> ) : ( '🎉 Surprise Me!' )}
+                 {activeLoader === 'surprise' ? ( <> Generating... <span className={styles.spinnerIcon}></span> </> ) : ( '🎉 Surprise Me!' )}
             </button>
         </div>
     </form>

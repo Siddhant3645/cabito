@@ -1,0 +1,116 @@
+/* /frontend/src/components/SerendipityToast.module.css */
+
+.toastContent {
+    font-family: var(--font-body);
+    line-height: 1.5;
+}
+.toastContent h4 {
+    font-family: var(--font-heading);
+    font-size: 1.0em;
+    font-weight: 700;
+    color: var(--color-dark-blue);
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+.suggestedActivityDetails {
+    font-size: 0.9em;
+    margin-bottom: 12px;
+    padding: 8px 10px;
+    background-color: var(--color-background-light);
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+}
+.suggestedActivityDetails p {
+    margin: 4px 0;
+}
+.suggestedActivityDetails strong {
+    color: var(--color-mid-blue);
+}
+.toastNote {
+    font-size: 0.8em;
+    font-style: italic;
+    color: var(--color-text-secondary);
+    margin: 10px 0;
+}
+.toastActions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+.toastButton {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+    flex-grow: 1;
+    text-align: center;
+    min-width: 80px;
+}
+.accept {
+    background-color: var(--color-mid-blue);
+    color: var(--color-white);
+    border-color: var(--color-mid-blue);
+}
+.accept:hover {
+    background-color: var(--color-dark-blue);
+    border-color: var(--color-dark-blue);
+}
+.next {
+    background-color: transparent;
+    color: var(--color-mid-blue);
+    border-color: var(--color-mid-blue);
+}
+.next:hover {
+    background-color: var(--color-light-blue-gray);
+    color: var(--color-dark-blue);
+}
+.cancelAi {
+    background-color: transparent;
+    color: #c53030;
+    border-color: #fed7d7;
+    font-size: 0.75rem;
+    flex-grow: 0;
+    padding: 5px 8px;
+}
+.cancelAi:hover {
+    background-color: #fed7d7;
+    color: #9b2c2c;
+    border-color: #fc8181;
+}
+.aiInsightBadge {
+    margin-left: 5px;
+    font-size: 0.85em;
+    cursor: help;
+}
+
+/* These need to be global to override the react-toastify library defaults */
+:global(.serendipity-custom-toast) {
+    background-color: var(--color-white) !important;
+    color: var(--color-text-dark) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.18) !important;
+    border-left: 6px solid var(--color-accent-orange) !important;
+    padding: 12px 15px !important;
+    width: 350px !important;
+}
+:global(.serendipity-custom-toast .Toastify__progress-bar) {
+    background: var(--color-accent-orange) !important;
+    height: 4px !important;
+}
+:global(.serendipity-custom-toast .Toastify__close-button) {
+    color: var(--color-text-secondary) !important;
+    opacity: 0.7 !important;
+}
+:global(.serendipity-custom-toast .Toastify__close-button:hover) {
+    opacity: 1 !important;
+    color: var(--color-text-dark) !important;
+}

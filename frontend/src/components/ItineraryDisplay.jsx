@@ -1,10 +1,10 @@
-// /frontend/src/components/ItineraryDisplay.jsx (Complete File)
+// /frontend/src/components/ItineraryDisplay.jsx (Complete & Refactored)
 
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import Confetti from 'react-confetti';
 import ActivityDetailModal from './ActivityDetailModal';
 import MapView from './MapView';
-import '../App.css';
+import styles from './ItineraryDisplay.module.css';
 
 function useWindowSize() {
   const [size, setSize] = useState([window.innerWidth, window.innerHeight]);
@@ -101,12 +101,12 @@ const ItinerarySummary = ({ data }) => {
     };
 
     return (
-        <div className="itinerary-summary-box">
-            <div className="summary-item"><span className="summary-label">📍 Location</span><span className="summary-value">{location}</span></div>
-            <div className="summary-item"><span className="summary-label">▶️ From</span><span className="summary-value">{formatSummaryDate(startDate)}, {formatSummaryTime(startDate)}</span></div>
-            <div className="summary-item"><span className="summary-label">⏹️ To</span><span className="summary-value">{formatSummaryDate(endDate)}, {formatSummaryTime(endDate)}</span></div>
-            <div className="summary-item"><span className="summary-label">⏳ Duration</span><span className="summary-value">{calculateDuration(startDate, endDate)}</span></div>
-            <div className="summary-item"><span className="summary-label">💰 Budget</span><span className="summary-value">~ {new Intl.NumberFormat('en-IN', { style: 'currency', currency: currency || 'INR' }).format(budget)}</span></div>
+        <div className={styles.itinerarySummaryBox}>
+            <div className={styles.summaryItem}><span className={styles.summaryLabel}>📍 Location</span><span className={styles.summaryValue}>{location}</span></div>
+            <div className={styles.summaryItem}><span className={styles.summaryLabel}>▶️ From</span><span className={styles.summaryValue}>{formatSummaryDate(startDate)}, {formatSummaryTime(startDate)}</span></div>
+            <div className={styles.summaryItem}><span className={styles.summaryLabel}>⏹️ To</span><span className={styles.summaryValue}>{formatSummaryDate(endDate)}, {formatSummaryTime(endDate)}</span></div>
+            <div className={styles.summaryItem}><span className={styles.summaryLabel}>⏳ Duration</span><span className={styles.summaryValue}>{calculateDuration(startDate, endDate)}</span></div>
+            <div className={styles.summaryItem}><span className={styles.summaryLabel}>💰 Budget</span><span className={styles.summaryValue}>~ {new Intl.NumberFormat('en-IN', { style: 'currency', currency: currency || 'INR' }).format(budget)}</span></div>
         </div>
     );
 };
@@ -136,40 +136,40 @@ function ItineraryDisplay({ itineraryData, onRemove, completedIndices, onToggleC
     };
     
     return (
-        <div className={`itinerary-display ${isRegenerating ? 'is-regenerating' : ''}`}>
+        <div>
             {showConfetti && <Confetti width={width} height={height} recycle={false} onConfettiComplete={() => setShowConfetti(false)} />}
             
-            <div className="itinerary-display-box">
+            <div className={styles.itineraryDisplayBox}>
                 {itineraryData.custom_heading && (
-                    <div className="custom-itinerary-heading"><h3>{itineraryData.custom_heading}</h3></div>
+                    <div className={styles.customHeading}><h3>{itineraryData.custom_heading}</h3></div>
                 )}
                 
                 {weather && ( 
-                    <div className="weather-display-box-revised">
-                         <div className="weather-col-primary">
-                             <span className="weather-main-icon" title={weather.time_of_day_descriptor || weather.condition.description}>{getTimeOfDaySymbol(weather.time_of_day_descriptor, weather.is_day)}</span>
-                             <div className="weather-primary-text">
-                                 <span className="weather-temp">{Math.round(weather.temperature_celsius)}°C</span>
-                                 <span className="weather-condition-text">
+                    <div className={styles.weatherDisplayBox}>
+                         <div className={styles.weatherColPrimary}>
+                             <span className={styles.weatherMainIcon} title={weather.time_of_day_descriptor || weather.condition.description}>{getTimeOfDaySymbol(weather.time_of_day_descriptor, weather.is_day)}</span>
+                             <div className={styles.weatherPrimaryText}>
+                                 <span className={styles.weatherTemp}>{Math.round(weather.temperature_celsius)}°C</span>
+                                 <span className={styles.weatherConditionText}>
                                      {weather.condition.description}
                                      {weather.time_of_day_descriptor && (
-                                         <span className="day-night-indicator">({weather.time_of_day_descriptor})</span>
+                                         <span className={styles.dayNightIndicator}>({weather.time_of_day_descriptor})</span>
                                      )}
                                  </span>
-                                 <span className="weather-feels-like">(Feels like {Math.round(weather.feels_like_celsius)}°C)</span>
+                                 <span className={styles.weatherFeelsLike}>(Feels like {Math.round(weather.feels_like_celsius)}°C)</span>
                              </div>
                          </div>
-                         <div className="weather-col-aisentence">{weather.ai_weather_sentence && (<p className="ai-weather-sentence"><em>{weather.ai_weather_sentence}</em></p>)}</div>
-                         <div className="weather-col-extras"><div className="weather-extras"><span>💧 {weather.precipitation_probability_percent}%</span><span>💨 {weather.wind_speed_kmh.toFixed(1)} km/h</span></div></div>
+                         <div className={styles.weatherColAiSentence}>{weather.ai_weather_sentence && (<p className={styles.aiWeatherSentence}><em>{weather.ai_weather_sentence}</em></p>)}</div>
+                         <div className={styles.weatherColExtras}><div className={styles.weatherExtras}><span>💧 {weather.precipitation_probability_percent}%</span><span>💨 {weather.wind_speed_kmh.toFixed(1)} km/h</span></div></div>
                     </div>
                 )}
                 
-                {originalFormData && <ItinerarySummary data={originalFormData} />}
+                {(originalFormData || (itineraryData.original_request_details && !isViewOnly)) && <ItinerarySummary data={originalFormData || {original_request_details: itineraryData.original_request_details}} />}
                 
-                <div className={`itinerary-map-and-table-grid ${isMapVisible ? 'map-is-visible' : ''}`}>
+                <div className={`${styles.itineraryMapAndTableGrid} ${isMapVisible ? styles.mapIsVisible : ''}`}>
                     {hasActivities && (
                         <div 
-                            className='map-toggle-button-top-center' 
+                            className={styles.mapToggleButtonTopCenter} 
                             onClick={(e) => { e.stopPropagation(); setIsMapVisible(prev => !prev); }} 
                             title={isMapVisible ? "Hide Map" : "Show Map"}
                         >
@@ -177,7 +177,7 @@ function ItineraryDisplay({ itineraryData, onRemove, completedIndices, onToggleC
                         </div>
                     )}
 
-                    <div className="map-peek-container-top">
+                    <div className={styles.mapPeekContainerTop}>
                          {hasActivities && (
                             <MapView 
                                 itineraryItems={itineraryData.itinerary} 
@@ -187,88 +187,81 @@ function ItineraryDisplay({ itineraryData, onRemove, completedIndices, onToggleC
                         )}
                     </div>
                     
-                    <div className="itinerary-table-container">
-                        <table className="itinerary-table">
+                    <div className={styles.itineraryTableContainer}>
+                        <table className={styles.itineraryTable}>
                             <thead>
                                 <tr>
-                                    {!isViewOnly && <th className="col-status mobile-hidden">Status</th>}
-                                    <th className="col-activity">Leg / Activity</th>
-                                    <th className="col-type mobile-hidden">Type</th>
-                                    <th className="col-start mobile-hidden">Start Time</th>
-                                    <th className="col-end">End Time</th>
-                                    <th className="col-duration">Duration</th>
-                                    <th className="col-cost">Est. Cost</th>
-                                    {!isViewOnly && <th className="col-action">Action</th>}
+                                    {!isViewOnly && <th className={styles.colStatus}>Status</th>}
+                                    <th className={styles.colActivity}>Leg / Activity</th>
+                                    <th className={styles.colType}>Type</th>
+                                    <th className={styles.colStart}>Start Time</th>
+                                    <th className={styles.colEnd}>End Time</th>
+                                    <th className={styles.colDuration}>Duration</th>
+                                    <th className={styles.colCost}>Est. Cost</th>
+                                    {!isViewOnly && <th className={styles.colAction}>Action</th>}
                                 </tr>
                             </thead>
-                        </table>
-                        
-                        <div className="itinerary-body-scroll-container">
-                            <table className="itinerary-table">
-                                <tbody>
-                                    {hasActivities ? itineraryData.itinerary.map((item, index) => {
-                                        const isCompleted = completedIndices?.has(index);
-                                        const costText = (item.estimated_cost_inr === null || item.estimated_cost_inr === undefined) ? 'Variable' : (item.estimated_cost_inr > 0 ? `₹${item.estimated_cost_inr.toFixed(2)}` : 'Free');
-                                        return (
-                                            <tr key={item.osm_id || `${item.leg_type}-${index}`} className={`leg-type-${item.leg_type.toLowerCase()} ${isCompleted && !isViewOnly ? 'completed-item' : ''}`}
-                                                onClick={() => item.leg_type === 'ACTIVITY' && handleOpenActivityDetailModal(item)}
-                                            >
-                                                {!isViewOnly && (
-                                                    <td className="col-status mobile-hidden" onClick={(e) => e.stopPropagation()}>
-                                                        {item.leg_type === 'ACTIVITY' && (
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={!!isCompleted}
-                                                                onChange={() => onToggleComplete(index)}
-                                                            />
-                                                        )}
-                                                    </td>
-                                                )}
-                                                
-                                                <td className="col-activity">
-                                                    <div className="activity-container">
-                                                        <span className="activity-name">
-                                                            {item.leg_type === 'TRAVEL' ? '🚗' : '📍'} {item.activity}
-                                                        </span>
-                                                        {item.ai_insight && (
-                                                            <span className="custom-tooltip">
-                                                                <strong>Cabito Tip:</strong> {item.ai_insight}
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                </td>
+                            <tbody>
+                                {hasActivities ? itineraryData.itinerary.map((item, index) => {
+                                    const isCompleted = completedIndices?.has(index);
+                                    const costText = (item.estimated_cost_inr === null || item.estimated_cost_inr === undefined) ? 'Variable' : (item.estimated_cost_inr > 0 ? `₹${item.estimated_cost_inr.toFixed(2)}` : 'Free');
+                                    const rowClasses = [
+                                        item.leg_type === 'ACTIVITY' ? styles.legTypeActivity : '',
+                                        isCompleted && !isViewOnly ? styles.completedItem : ''
+                                    ].join(' ').trim();
 
-                                                <td className="col-type mobile-hidden"><span title={getActivityDescriptionTooltip(item.matched_preferences, item.food_type, item.specificAmenity)}>{formatActivityEmojis(item.matched_preferences, item.food_type, item.specificAmenity)}</span></td>
-                                                <td className="col-start mobile-hidden">{formatTimeToLocalAMPM(item.leg_type === 'TRAVEL' ? item.estimated_departure : item.estimated_arrival)}</td>
-                                                <td className="col-end">{formatTimeToLocalAMPM(item.leg_type === 'TRAVEL' ? item.estimated_arrival : item.estimated_departure)}</td>
-                                                <td className="col-duration">{formatDuration(item.estimated_duration_hrs)}</td>
-                                                <td className="col-cost">{costText}</td>
-                                                {!isViewOnly && <td className="col-action" onClick={(e) => e.stopPropagation()}>{item.leg_type === 'ACTIVITY' && <button onClick={() => onRemove(item.osm_id)} className="remove-button" disabled={isCompleted}>❌</button>}</td>}
-                                            </tr>
-                                        );
-                                    }) : (
-                                        <tr><td colSpan={isViewOnly ? 7 : 8} style={{textAlign: 'center', padding: '30px'}}>No activities found for this plan.</td></tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-                    
-                        {hasActivities && (
-                           <table className="itinerary-table">
+                                    return (
+                                        <tr key={item.osm_id || `${item.leg_type}-${index}`} className={rowClasses}
+                                            onClick={() => item.leg_type === 'ACTIVITY' && handleOpenActivityDetailModal(item)}
+                                        >
+                                            {!isViewOnly && (
+                                                <td className={styles.statusCell} onClick={(e) => e.stopPropagation()}>
+                                                    {item.leg_type === 'ACTIVITY' && (
+                                                        <input type="checkbox" checked={!!isCompleted} onChange={() => onToggleComplete(index)}/>
+                                                    )}
+                                                </td>
+                                            )}
+                                            
+                                            <td className={styles.colActivity}>
+                                                <div className={styles.activityContainer}>
+                                                    <span className={styles.activityName}>
+                                                        {item.leg_type === 'TRAVEL' ? '🚗' : '📍'} {item.activity}
+                                                    </span>
+                                                    {item.ai_insight && (
+                                                        <span className={styles.customTooltip}>
+                                                            <strong>Cabito Tip:</strong> {item.ai_insight}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </td>
+
+                                            <td className={`${styles.colType} ${styles.typeCell}`}><span title={getActivityDescriptionTooltip(item.matched_preferences, item.food_type, item.specificAmenity)}>{formatActivityEmojis(item.matched_preferences, item.food_type, item.specificAmenity)}</span></td>
+                                            <td className={`${styles.colStart} ${styles.timeCell}`}>{formatTimeToLocalAMPM(item.leg_type === 'TRAVEL' ? item.estimated_departure : item.estimated_arrival)}</td>
+                                            <td className={`${styles.colEnd} ${styles.timeCell}`}>{formatTimeToLocalAMPM(item.leg_type === 'TRAVEL' ? item.estimated_arrival : item.estimated_departure)}</td>
+                                            <td className={`${styles.colDuration} ${styles.durationCell}`}>{formatDuration(item.estimated_duration_hrs)}</td>
+                                            <td className={styles.colCost}>{costText}</td>
+                                            {!isViewOnly && <td className={styles.actionCell} onClick={(e) => e.stopPropagation()}>{item.leg_type === 'ACTIVITY' && <button onClick={() => onRemove(item.osm_id)} className={styles.removeButton} disabled={isCompleted}>❌</button>}</td>}
+                                        </tr>
+                                    );
+                                }) : (
+                                    <tr><td colSpan={isViewOnly ? 7 : 8} style={{textAlign: 'center', padding: '30px'}}>No activities found for this plan.</td></tr>
+                                )}
+                            </tbody>
+                             {hasActivities && (
                                 <tfoot>
                                     <tr>
                                         <td colSpan={isViewOnly ? 6 : 7} style={{textAlign: 'right', paddingRight: '12px'}}>Total Estimated Cost:</td>
-                                        <td className="col-cost">₹{itineraryData.total_estimated_cost.toFixed(2)}</td>
+                                        <td className={styles.colCost}>₹{itineraryData.total_estimated_cost.toFixed(2)}</td>
                                         {!isViewOnly && <td></td>}
                                     </tr>
                                 </tfoot>
-                           </table>
-                        )}
+                           )}
+                        </table>
                     </div>
                 </div>
 
                 {progressPercentage > 0 && !isViewOnly && (
-                    <div className="progress-bar-container" style={{ marginTop: '25px' }}>
+                    <div className={styles.progressBarContainer}>
                         <label htmlFor="itinerary-progress">Progress:</label>
                         <progress id="itinerary-progress" value={progressPercentage} max="100" />
                         <span>{Math.round(progressPercentage)}%</span>

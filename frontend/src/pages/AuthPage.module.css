@@ -1,0 +1,44 @@
+/* /frontend/src/pages/AuthPage.module.css */
+
+.authPage {
+  max-width: 420px;
+  margin: 80px auto;
+  padding: 40px 45px;
+  background-color: var(--color-background-card);
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.authPage h2 {
+  margin-bottom: 35px;
+  font-size: 1.9rem;
+  color: var(--color-dark-blue);
+}
+
+.authSwitch {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 0.95rem;
+  color: var(--color-text-secondary);
+}
+
+.authSwitch a {
+  color: var(--color-mid-blue);
+  font-weight: 700;
+  text-decoration: none;
+  margin-left: 5px;
+}
+
+.authSwitch a:hover {
+  text-decoration: underline;
+  color: var(--color-dark-blue);
+}
+/* --- Media Queries --- */
+@media (max-width: 480px) {
+    .authPage {
+        margin: 40px 15px;
+        padding: 20px;
+        max-width: none;
+    }
+}

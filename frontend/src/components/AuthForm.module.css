@@ -1,0 +1,93 @@
+/* /frontend/src/components/AuthForm.module.css */
+
+.authForm {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formGroup label {
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding-left: 5px;
+  color: var(--color-mid-blue);
+  font-family: var(--font-heading);
+}
+
+.formGroup input[type="email"],
+.formGroup input[type="password"] {
+  padding: 14px 18px;
+  border: 1px solid var(--color-input-border);
+  background-color: var(--color-input-background);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: var(--font-body);
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.formGroup input:focus {
+  border-color: var(--color-mid-blue);
+  background-color: var(--color-white);
+  box-shadow: 0 0 0 3px var(--color-input-focus-ring);
+  outline: none;
+}
+
+.submitButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 14px 20px;
+  margin-top: 15px;
+  font-size: 1.1rem;
+  background: linear-gradient(135deg, var(--color-dark-blue), var(--color-mid-blue));
+  color: var(--color-white);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(26, 43, 69, 0.2);
+}
+
+.submitButton:hover {
+  opacity: 0.9;
+  box-shadow: 0 6px 15px rgba(26, 43, 69, 0.3);
+}
+
+.submitButton:active {
+  transform: translateY(1px);
+}
+
+.submitButton:disabled {
+  background: var(--color-disabled-bg);
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
+  opacity: 0.8;
+  box-shadow: none;
+}
+
+.submitButton:disabled:hover {
+  opacity: 0.8;
+  background: var(--color-disabled-bg);
+  box-shadow: none;
+}
+
+.errorMessage {
+  color: var(--color-error-text);
+  background-color: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  padding: 12px 15px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  text-align: center;
+}
