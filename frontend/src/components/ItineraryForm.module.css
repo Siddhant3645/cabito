@@ -166,7 +166,9 @@
 .hereButton {
   font-family: var(--font-body);
   font-size: 0.9rem;
-  padding: 8px 15px;
+  font-weight: 700;
+  padding: 0 15px;
+  height: 40px;
   border-radius: 6px;
   text-decoration: none;
   cursor: pointer;
@@ -176,8 +178,7 @@
   transition: all 0.2s ease;
   white-space: nowrap;
   flex-shrink: 0;
-  height: auto;
-  line-height: normal;
+  margin-left: auto;
 }
 
 .nowButton:hover,
@@ -243,7 +244,7 @@
   margin: 0;
 }
 
-.formColumnRight .preferencesWrapper .preferencesTitleLabel {
+.preferencesTitleLabel {
   text-align: left;
   width: 100%;
   font-weight: 700;
@@ -255,7 +256,7 @@
   display: block;
 }
 
-.preferencesWrapper .preferencesGroup {
+.preferencesGroup {
   border: 1px solid var(--color-input-border);
   background-color: var(--color-input-background);
   padding: 20px 30px 15px 30px;
@@ -267,7 +268,7 @@
   flex-grow: 1;
 }
 
-.preferencesWrapper .checkboxOption {
+.checkboxOption {
   display: flex;
   align-items: center;
   margin-bottom: 8.5px;
@@ -276,15 +277,15 @@
   border-radius: 4px;
 }
 
-.preferencesWrapper .checkboxOption:last-child {
+.checkboxOption:last-child {
   margin-bottom: 5px;
 }
 
-.preferencesWrapper .checkboxOption:hover {
+.checkboxOption:hover {
   background-color: #f0f6ff;
 }
 
-.preferencesWrapper .checkboxOption input[type="checkbox"] {
+.checkboxOption input[type="checkbox"] {
   margin-right: 15px;
   width: 19px;
   height: 19px;
@@ -295,11 +296,11 @@
   transition: transform 0.1s ease-in-out;
 }
 
-.preferencesWrapper .checkboxOption input[type="checkbox"]:active {
+.checkboxOption input[type="checkbox"]:active {
   transform: scale(1.0);
 }
 
-.preferencesWrapper .checkboxOption label {
+.checkboxOption label {
   font-weight: 400;
   color: var(--color-text-dark);
   cursor: pointer;
@@ -308,16 +309,16 @@
   transition: color 0.2s ease;
 }
 
-.preferencesWrapper .checkboxOption input[type="checkbox"]:checked+label {
+.checkboxOption input[type="checkbox"]:checked+label {
   font-weight: 700;
   color: var(--color-dark-blue);
 }
 
-.preferencesWrapper .checkboxOption:has(input:checked) {
+.checkboxOption:has(input:checked) {
   background-color: #e6f0ff;
 }
 
-.preferencesWrapper .checkboxOption label:hover {
+.checkboxOption label:hover {
   color: var(--color-mid-blue);
 }
 

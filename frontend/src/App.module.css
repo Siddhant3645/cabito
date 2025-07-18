@@ -13,10 +13,8 @@
     gap: 15px;
 
     /* <<< FIX: Adds padding to the bottom to avoid the mobile home bar >>> */
-    /* Fallback for older browsers */
-    padding-bottom: constant(safe-area-inset-bottom);
-    /* Modern syntax */
-    padding-bottom: env(safe-area-inset-bottom);
+    padding-bottom: calc(20px + constant(safe-area-inset-bottom)); /* Fallback with base padding*/
+    padding-bottom: calc(20px + env(safe-area-inset-bottom)); /* Modern syntax with base padding */
 }
 
 .copyright {
@@ -29,13 +27,12 @@
     gap: 10px;
     justify-content: center;
     flex-wrap: wrap;
+     padding: 0 10px; /* Add some padding for better spacing on edges */
 }
 
 .footerLinks a {
     color: var(--color-mid-blue);
     text-decoration: none;
-    padding: 0 10px;
-    position: relative;
     transition: color 0.2s ease;
 }
 

@@ -1,13 +1,16 @@
-// /frontend/src/components/Navbar.jsx (Final Version with improved mobile view)
+// /frontend/src/components/Navbar.jsx (Corrected for ReferenceError)
 
 import React, { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom'; // <<< FIX: Import useLocation
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
 import styles from './Navbar.module.css';
 
 function Navbar({ isAuthenticated, user, isAuthLoading, onLogout }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   useBodyScrollLock(isMobileMenuOpen);
+
+  const location = useLocation(); // <<< FIX: Get the current location object
+  const isHomePage = location.pathname === '/'; // <<< FIX: Define the isHomePage variable
 
   const handleLogout = () => {
     onLogout();
@@ -48,9 +51,9 @@ function Navbar({ isAuthenticated, user, isAuthLoading, onLogout }) {
           )}
         </div>
 
-        {/* --- FIX: New Mobile-Only Auth Buttons (for logged-out state) --- */}
+        {/* --- Mobile-Only Auth Buttons (for logged-out state) --- */}
         <div className={styles.navAuthMobile}>
-            {!isAuthLoading && !isAuthenticated && (
+            {!isAuthLoading && !isAuthenticated && !isHomePage && (
                 <>
                     <Link to="/login" className={styles.navButton}>Login</Link>
                     <Link to="/signup" className={`${styles.navButton} ${styles.navButtonPrimary}`}>Sign Up</Link>
@@ -58,7 +61,7 @@ function Navbar({ isAuthenticated, user, isAuthLoading, onLogout }) {
             )}
         </div>
 
-        {/* --- FIX: Hamburger menu now only appears if logged in --- */}
+        {/* --- Hamburger menu (for logged-in state) --- */}
         {!isAuthLoading && isAuthenticated && (
             <button className={styles.hamburgerButton} onClick={() => setIsMobileMenuOpen(true)} aria-label="Open menu">
             &#9776;
@@ -66,7 +69,7 @@ function Navbar({ isAuthenticated, user, isAuthLoading, onLogout }) {
         )}
       </nav>
 
-      {/* Side-drawer menu remains unchanged, will only open if hamburger is clicked */}
+      {/* Side-drawer menu */}
       {isMobileMenuOpen && (
         <div className={`${styles.mobileMenuOverlay} ${isMobileMenuOpen ? styles.isOpen : ''}`} onClick={closeMobileMenu}>
           <div className={styles.mobileMenuDrawer} onClick={(e) => e.stopPropagation()}>

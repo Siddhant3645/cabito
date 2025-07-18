@@ -1,10 +1,10 @@
-/* /frontend/src/components/Navbar.module.css (Complete) */
+/* /frontend/src/components/Navbar.module.css (Final Edge-to-Edge Fix) */
 
 .mainNav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 40px;
+    padding: 15px 40px; /* Default padding for all sides */
     background-color: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--color-border);
@@ -12,11 +12,11 @@
     position: sticky;
     top: 0;
     z-index: 1000;
-    /* <<< FIX: Adds padding to the top to avoid the device notch/status bar >>> */
-    /* Fallback for older browsers */
-    padding-top: constant(safe-area-inset-top); 
-    /* Modern syntax */
-    padding-top: env(safe-area-inset-top);
+
+    /* <<< FIX: Use calc() to ADD the safe area padding to the default padding >>> */
+    /* This ensures it looks right on phones with AND without a notch. */
+    padding-top: calc(15px + constant(safe-area-inset-top)); /* Fallback */
+    padding-top: calc(15px + env(safe-area-inset-top)); /* Modern */
 }
 .navGroupLeft { display: flex; align-items: center; gap: 25px; }
 .navBrandLink { display: flex; align-items: center; text-decoration: none; }
@@ -217,5 +217,8 @@
     }
   .mainNav {
         padding: 15px 25px;
+        /* Re-apply padding-top fix for mobile view specifically */
+        padding-top: calc(15px + constant(safe-area-inset-top));
+        padding-top: calc(15px + env(safe-area-inset-top));
     }
 }
