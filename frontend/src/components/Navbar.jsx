@@ -1,7 +1,7 @@
 // /frontend/src/components/Navbar.jsx (Corrected for ReferenceError)
 
 import React, { useState } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom'; // <<< FIX: Import useLocation
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
 import styles from './Navbar.module.css';
 
@@ -9,8 +9,10 @@ function Navbar({ isAuthenticated, user, isAuthLoading, onLogout }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   useBodyScrollLock(isMobileMenuOpen);
 
-  const location = useLocation(); // <<< FIX: Get the current location object
-  const isHomePage = location.pathname === '/'; // <<< FIX: Define the isHomePage variable
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+  // --- FIX: Add a check for the auth pages ---
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
 
   const handleLogout = () => {
     onLogout();
@@ -53,7 +55,8 @@ function Navbar({ isAuthenticated, user, isAuthLoading, onLogout }) {
 
         {/* --- Mobile-Only Auth Buttons (for logged-out state) --- */}
         <div className={styles.navAuthMobile}>
-            {!isAuthLoading && !isAuthenticated && !isHomePage && (
+            {/* --- FIX: Add !isAuthPage to the condition --- */}
+            {!isAuthLoading && !isAuthenticated && !isHomePage && !isAuthPage && (
                 <>
                     <Link to="/login" className={styles.navButton}>Login</Link>
                     <Link to="/signup" className={`${styles.navButton} ${styles.navButtonPrimary}`}>Sign Up</Link>

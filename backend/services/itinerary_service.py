@@ -148,9 +148,36 @@ async def _check_place_viability_and_timing(
 #         return itinerary_schemas.ActivityTimeViability(is_viable=False, reason="Opening hours parsing error.")
 
 def _get_matched_preferences(tags: Dict[str, Any], user_prefs: Set[str]) -> List[str]:
-    # ... (function is unchanged)
-    pass
+    """
+    Determines which user preferences match a given set of OSM tags.
+    """
+    matched = []
+    for pref in user_prefs:
+        if pref in constants.PREFERENCE_TO_OSM_SELECTOR:
+            selectors = constants.PREFERENCE_TO_OSM_SELECTOR[pref]
+            for selector in selectors:
+                # Basic parsing of Overpass-style selectors like '[key="value"]' or '[key]'
+                match = re.match(r'\[(\w+)(?:~"([^"]+)")?\]', selector)
+                if match:
+                    key, values_str = match.groups()
+                    if key in tags:
+                        if values_str:
+                            # Handles key~"value1|value2"
+                            possible_values = set(values_str.split('|'))
+                            if tags.get(key) in possible_values:
+                                if pref not in matched:
+                                    matched.append(pref)
+                                break  # Move to the next preference once one selector matches
+                        else:
+                            # Handles [key]
+                            if pref not in matched:
+                                matched.append(pref)
+                            break
+            if pref in matched:
+                continue # Skip other selectors for this pref if already matched
+    return matched
 
+# --- REVISED SCORING FUNCTION ---
 def _get_candidate_score(
     candidate: Dict[str, Any],
     all_keywords: List[str],
@@ -158,107 +185,94 @@ def _get_candidate_score(
     distance_from_start: float,
     fulfilled_preferences: Set[str],
     added_activity_signatures: Set[str],
-    ideal_arrival_utc: datetime,
-    added_meal_times: Set[str]
+    ideal_arrival_utc: datetime, # Kept for potential future use with timing scores
+    added_meal_times: Set[str] # Kept for meal diversity logic
 ) -> int:
-    # ... (function is unchanged)
-    pass
+    """
+    Calculates a candidate's score based on available OSM data, keywords, and user preferences.
+    This version is lightweight and does NOT rely on external API calls (like Google ratings).
+    """
+    score = 0
+    name_lower = (candidate.get('name') or '').lower()
+    tags = candidate.get('tags', {})
+    description = (candidate.get('description') or '').lower()
+    is_foodie = 'foodie' in matched_prefs
+    is_shopping = 'shopping' in matched_prefs
+    is_sightseeing_or_history = any(p in matched_prefs for p in ["sights", "history", "religious"])
+    is_park = 'park' in matched_prefs
 
+    # --- 1. Preference & Keyword Matching ---
 
-# --- OLD SCORING FUNCTION (COMMENTED OUT) ---
-# def _get_candidate_score(
-#     candidate: Dict[str, Any],
-#     all_keywords: List[str],
-#     matched_prefs: List[str],
-#     distance_from_start: float,
-#     fulfilled_preferences: Set[str],
-#     added_activity_signatures: Set[str],
-#     ideal_arrival_utc: datetime,
-#     added_meal_times: Set[str]
-# ) -> int:
-#     score = 0
-#     name_lower = (candidate.get('name') or '').lower()
-#     tags = candidate.get('tags', {})
-#     rating = candidate.get('rating_google')
-#     user_ratings_total = candidate.get('user_ratings_total_google', 0)
-#     description = (candidate.get('description') or '').lower()
-#     is_foodie = 'foodie' in matched_prefs
-#     is_shopping = 'shopping' in matched_prefs
-#     is_sightseeing_or_history = any(p in matched_prefs for p in ["sights", "history", "religious"])
-#     is_park = 'park' in matched_prefs
-#
-#     activity_signature = None
-#     if matched_prefs:
-#         if 'foodie' not in matched_prefs:
-#             activity_signature = f"{matched_prefs[0]}_{tags.get('amenity') or tags.get('shop') or tags.get('leisure')}"
-#             if activity_signature in added_activity_signatures:
-#                 score += constants.SIMILAR_ACTIVITY_PENALTY
-#
-#     newly_fulfilled_prefs = set(matched_prefs) - fulfilled_preferences
-#     if newly_fulfilled_prefs:
-#         score += constants.PREFERENCE_COVERAGE_BONUS * len(newly_fulfilled_prefs)
-#    
-#     if matched_prefs and not fulfilled_preferences.intersection(matched_prefs):
-#         score += constants.DIVERSIFICATION_BONUS
-#    
-#     if any(re.search(re.escape(kw), name_lower, re.IGNORECASE) for kw in all_keywords):
-#         score += constants.KEYWORD_DISCOVERY_BONUS
-#    
-#     if rating:
-#         if rating > 4.2: score += constants.RATING_SCORE_BONUS['high']
-#         elif rating > 3.8: score += constants.RATING_SCORE_BONUS['medium']
-#         else: score += constants.RATING_SCORE_BONUS['low']
-#
-#     if is_foodie:
-#         if any(chain in name_lower for chain in constants.INTERNATIONAL_FOOD_CHAINS_EXCLUDE):
-#             return -9999
-#         if 'wikipedia' in tags: score += constants.WIKIPEDIA_NOTABILITY_BOOST_FOOD
-#         if any(kw in description for kw in constants.AUTHENTICITY_KEYWORDS): score += constants.AUTHENTICITY_KEYWORD_BOOST_FOOD
-#         if rating and user_ratings_total:
-#             if rating >= 4.5 and user_ratings_total > 500: score += constants.HIGH_RATING_HIGH_REVIEWS_FOOD_BOOST
-#             elif rating >= 4.0 and user_ratings_total > 100: score += constants.GOOD_RATING_MODERATE_REVIEWS_FOOD_BOOST
-#             elif rating < 3.5: score += constants.LOW_RATING_PENALTY_FOOD
-#        
-#         if user_ratings_total and user_ratings_total > constants.MIN_REVIEWS_FOR_POPULARITY_BONUS:
-#             score += constants.POPULARITY_BONUS_FOOD
-#
-#         if candidate.get('_food_type') == 'meal':
-#             utc_offset = candidate.get('google_utc_offset_minutes')
-#             if utc_offset is not None:
-#                 local_arrival_time = ideal_arrival_utc.astimezone(dt_timezone(timedelta(minutes=utc_offset)))
-#                 local_hour = local_arrival_time.hour
-#                 for meal, times in constants.MEAL_TIMES.items():
-#                     if times['start_hour'] <= local_hour < times['end_hour']:
-#                         if meal in added_meal_times:
-#                             return -9999
-#                         else:
-#                             score += constants.MEAL_TIMING_BONUS
-#                         break
-#         if tags.get('cuisine') == 'fast_food': score += constants.GENERIC_FAST_FOOD_PENALTY
-#        
-#     if is_shopping:
-#         if 'wikipedia' in tags: score += constants.WIKIPEDIA_NOTABILITY_BOOST_SHOP
-#         if any(term in name_lower.split() for term in constants.GENERIC_STORE_MATCH_TERMS):
-#             score += constants.GENERIC_STORE_KEYWORDS_PENALTY
-#         if any(kw in description for kw in constants.SHOPPING_AUTHENTICITY_KEYWORDS): score += constants.SHOPPING_AUTHENTICITY_KEYWORD_BOOST
-#         if rating and user_ratings_total:
-#             if rating >= 4.4 and user_ratings_total > 200: score += constants.HIGH_RATING_HIGH_REVIEWS_SHOP_BOOST
-#             elif rating >= 4.0 and user_ratings_total > 50: score += constants.GOOD_RATING_MODERATE_REVIEWS_SHOP_BOOST
-#             elif rating < 3.7: score += constants.LOW_RATING_PENALTY_SHOP
-#         shop_type = tags.get('shop')
-#         if shop_type == 'mall': score += constants.SHOPPING_MALL_BOOST
-#         elif shop_type in {'souvenir', 'gift', 'crafts', 'art'}: score += constants.SOUVENIR_GIFT_CRAFT_ART_BOOST
-#         elif shop_type in {'general', 'department_store'}: score += constants.GENERAL_SHOP_PENALTY
-#    
-#     if is_sightseeing_or_history and 'wikipedia' in tags:
-#         score += constants.SIGNIFICANCE_BONUS_SIGHTS
-#     if is_park and 'wikipedia' in tags:
-#         score += constants.SIGNIFICANCE_BONUS_PARK
-#        
-#     if distance_from_start > 5:
-#         score -= (distance_from_start - 5) * 50
-#        
-#     return score
+    # Big bonus if a user's specific keyword is in the place name (high relevance)
+    if any(re.search(re.escape(kw), name_lower, re.IGNORECASE) for kw in all_keywords):
+        score += constants.KEYWORD_DISCOVERY_BONUS
+
+    # Bonus for fulfilling a preference category for the first time
+    newly_fulfilled_prefs = set(matched_prefs) - fulfilled_preferences
+    if newly_fulfilled_prefs:
+        score += constants.PREFERENCE_COVERAGE_BONUS * len(newly_fulfilled_prefs)
+
+    # Smaller bonus for simply diversifying the plan
+    if matched_prefs and not fulfilled_preferences.intersection(matched_prefs):
+        score += constants.DIVERSIFICATION_BONUS
+
+    # --- 2. Notability & Quality Proxies (from OSM data) ---
+
+    # Having a Wikipedia tag is a strong indicator of notability
+    if 'wikipedia' in tags or 'wikidata' in tags:
+        if is_foodie: score += constants.WIKIPEDIA_NOTABILITY_BOOST_FOOD
+        elif is_shopping: score += constants.WIKIPEDIA_NOTABILITY_BOOST_SHOP
+        elif is_sightseeing_or_history: score += constants.SIGNIFICANCE_BONUS_SIGHTS
+        elif is_park: score += constants.SIGNIFICANCE_BONUS_PARK
+        else: score += 50 # Generic notability bonus
+
+    # Check for authenticity keywords in the description
+    if description:
+        if is_foodie and any(kw in description for kw in constants.AUTHENTICITY_KEYWORDS):
+            score += constants.AUTHENTICITY_KEYWORD_BOOST_FOOD
+        if is_shopping and any(kw in description for kw in constants.SHOPPING_AUTHENTICITY_KEYWORD_BOOST):
+            score += constants.SHOPPING_AUTHENTICITY_KEYWORD_BOOST
+
+    # --- 3. Preference-Specific Heuristics & Penalties ---
+
+    if is_foodie:
+        # Penalize generic international fast-food chains
+        if any(chain in name_lower for chain in constants.INTERNATIONAL_FOOD_CHAINS_EXCLUDE):
+            return -9999  # Disqualify immediately
+        # Penalize generic fast food tags
+        if tags.get('amenity') == 'fast_food':
+            score += constants.GENERIC_FAST_FOOD_PENALTY
+
+    if is_shopping:
+        # Heavily penalize common, non-touristy generic stores by name
+        if any(term in name_lower.split() for term in constants.GENERIC_STORE_MATCH_TERMS):
+            score += constants.GENERIC_STORE_KEYWORDS_PENALTY
+        # Boost specific, desirable shop types
+        shop_type = tags.get('shop')
+        if shop_type == 'mall': score += constants.SHOPPING_MALL_BOOST
+        elif shop_type in {'souvenir', 'gift', 'crafts', 'art'}: score += constants.SOUVENIR_GIFT_CRAFT_ART_BOOST
+        # Penalize generic shop tags that passed the name check
+        elif shop_type in {'general', 'department_store'}: score += constants.GENERAL_SHOP_PENALTY
+
+    # Penalize adding too many activities of the same specific type (e.g., two museums)
+    activity_signature = None
+    if matched_prefs:
+        # Create a signature like "history_museum" or "foodie_restaurant"
+        primary_pref = matched_prefs[0]
+        sub_type = tags.get('amenity') or tags.get('shop') or tags.get('leisure') or tags.get('historic')
+        if sub_type:
+            activity_signature = f"{primary_pref}_{sub_type}"
+            if activity_signature in added_activity_signatures:
+                score += constants.SIMILAR_ACTIVITY_PENALTY
+
+    # --- 4. Final Adjustments ---
+
+    # Penalize locations that are very far from the starting point
+    if distance_from_start > 5: # Penalize distances over 5 km
+        score -= int((distance_from_start - 5) * 50)
+
+    return score
+
 
 # <<< MODIFIED: This function no longer calls HERE API >>>
 async def enrich_candidate(
@@ -383,7 +397,6 @@ async def build_itinerary(
     current_user: models.all_models.UserAccount,
     http_client: httpx.AsyncClient,
     gemini_model: genai.GenerativeModel
-    # gmaps_client: googlemaps.Client, # <<< REMOVED FROM SIGNATURE
 ) -> itinerary_schemas.ItineraryResponse:
     start_overall_time = time.time()
     start_dt_utc = datetime.fromisoformat(payload.start_datetime.replace('Z', '+00:00')).astimezone(dt_timezone.utc)
@@ -430,21 +443,18 @@ async def build_itinerary(
         user_prefs = constants.SURPRISE_ME_PREFERENCES
     
     if payload.custom_trip_description:
-        available_prefs = list(constants.PROMPT_EXAMPLES_FOR_PREFERENCES.keys())
         analysis_result = await ai_service.analyze_description_for_keywords_and_prefs(
-            gemini_model, payload.custom_trip_description, available_prefs
+            gemini_model, payload.custom_trip_description, list(constants.PROMPT_EXAMPLES_FOR_PREFERENCES.keys())
         )
         all_keywords.extend(analysis_result.get("keywords", []))
         user_prefs.update(analysis_result.get("mapped_preferences", []))
         logger.info(f"AI mapped description to preferences: {analysis_result.get('mapped_preferences', [])}")
 
     if user_prefs:
-        keyword_tasks = [
-            ai_service.get_dynamic_local_keywords_for_preference(gemini_model, target_city_normalized, pref)
-            for pref in user_prefs
-        ]
-        results_keywords = await asyncio.gather(*keyword_tasks)
-        all_keywords.extend([kw for sublist in results_keywords for kw in sublist])
+        keywords_from_prefs = await ai_service.get_dynamic_local_keywords_for_multiple_preferences(
+            gemini_model, target_city_normalized, list(user_prefs)
+        )
+        all_keywords.extend(keywords_from_prefs)
 
     all_keywords = list(set(all_keywords))
     logger.info(f"Using final keywords for search: {all_keywords}")
@@ -459,12 +469,9 @@ async def build_itinerary(
         if unique_selectors:
             query_parts = [f"node[name]{sel}(around:{query_radius_m},{start_coords[0]},{start_coords[1]});way[name]{sel}(around:{query_radius_m},{start_coords[0]},{start_coords[1]});relation[name]{sel}(around:{query_radius_m},{start_coords[0]},{start_coords[1]});" for sel in unique_selectors]
             overpass_query = f"[out:json][timeout:{constants.OVERPASS_TIMEOUT}];({ ''.join(query_parts) });out center;"
-            logger.debug(f"Executing Overpass Query: {overpass_query}")
             response = await http_client.post(constants.OVERPASS_API_URL, data=overpass_query)
-
             response.raise_for_status()
             osm_elements = response.json().get('elements', [])
-            
             logger.info(f"Broad search found {len(osm_elements)} elements.")
         else:
              logger.warning("No preferences provided for search.")
@@ -495,7 +502,7 @@ async def build_itinerary(
             else:
                 remaining_candidates.append(other_candidate)
         
-        best_in_group = max(similar_group, key=lambda x: x.get("rating_google") or 0.0) # Note: this key no longer exists, but we can leave it for now
+        best_in_group = max(similar_group, key=lambda x: len(x.get("description") or ""))
         processed_candidates.append(best_in_group)
         
         temp_enriched_candidates = remaining_candidates
@@ -503,7 +510,8 @@ async def build_itinerary(
     enriched_candidates = processed_candidates
     logger.info(f"De-duplication complete. {len(enriched_candidates)} unique candidates remaining.")
     
-    itinerary_items_final: List[itinerary_schemas.ItineraryItem] = []; total_cost_final = 0.0
+    itinerary_items_final: List[itinerary_schemas.ItineraryItem] = []
+    total_cost_final = 0.0
     current_dt_pack, (current_lat_pack, current_lon_pack) = start_dt_utc, start_coords
     remaining_candidates_dict = {cand["osm_id"]: cand for cand in enriched_candidates if cand.get("osm_id") not in payload.exclude_osm_ids}
     fulfilled_preferences = set()
@@ -515,21 +523,44 @@ async def build_itinerary(
         time_left_for_trip = (end_dt_utc - current_dt_pack).total_seconds() / 3600.0
         if time_left_for_trip < constants.MIN_VIABLE_ACTIVITY_HOURS or not remaining_candidates_dict: break
 
-        candidate_keys_to_score = list(remaining_candidates_dict.keys())
+        scored_candidates = []
+        for key, cand_data in remaining_candidates_dict.items():
+            distance_from_start = _haversine_distance(start_coords[0], start_coords[1], cand_data['lat'], cand_data['lon'])
+            matched_prefs_for_cand = _get_matched_preferences(cand_data['tags'], user_prefs)
+            score = _get_candidate_score(cand_data, all_keywords, matched_prefs_for_cand, distance_from_start, fulfilled_preferences, added_activity_signatures, current_dt_pack, added_meal_times)
+            scored_candidates.append((score, key))
         
-        # return_journey_tasks = [location_service.get_google_directions(gmaps_client, (remaining_candidates_dict[key]['lat'], remaining_candidates_dict[key]['lon']), start_coords, payload.travel_mode) for key in candidate_keys_to_score]
-        # routing_tasks = [location_service.get_google_directions(gmaps_client, (current_lat_pack, current_lon_pack), (remaining_candidates_dict[key]['lat'], remaining_candidates_dict[key]['lon']), payload.travel_mode) for key in candidate_keys_to_score]
-        return_journey_tasks = [location_service.get_directions(http_client, (remaining_candidates_dict[key]['lat'], remaining_candidates_dict[key]['lon']), start_coords, payload.travel_mode) for key in candidate_keys_to_score]
-        routing_tasks = [location_service.get_directions(http_client, (current_lat_pack, current_lon_pack), (remaining_candidates_dict[key]['lat'], remaining_candidates_dict[key]['lon']), payload.travel_mode) for key in candidate_keys_to_score]
+        scored_candidates.sort(key=lambda x: x[0], reverse=True)
+        candidate_keys_to_route = [key for score, key in scored_candidates[:30]]
+        
+        if not candidate_keys_to_route: break
 
-        all_directions = await asyncio.gather(*return_journey_tasks, *routing_tasks, return_exceptions=True)
-        
-        return_journey_results = dict(zip(candidate_keys_to_score, all_directions[:len(candidate_keys_to_score)]))
-        route_results = dict(zip(candidate_keys_to_score, all_directions[len(candidate_keys_to_score):]))
+        # --- BATCHED & RATE-LIMITED ROUTING CALLS ---
+        route_results = {}
+        return_journey_results = {}
+        chunk_size = 5  # Process 5 candidates at a time
+        for i in range(0, len(candidate_keys_to_route), chunk_size):
+            chunk_keys = candidate_keys_to_route[i:i+chunk_size]
+            
+            return_journey_tasks = [location_service.get_directions(http_client, (remaining_candidates_dict[key]['lat'], remaining_candidates_dict[key]['lon']), start_coords, payload.travel_mode) for key in chunk_keys]
+            routing_tasks = [location_service.get_directions(http_client, (current_lat_pack, current_lon_pack), (remaining_candidates_dict[key]['lat'], remaining_candidates_dict[key]['lon']), payload.travel_mode) for key in chunk_keys]
+
+            all_directions_chunk = await asyncio.gather(*return_journey_tasks, *routing_tasks, return_exceptions=True)
+            
+            # Process results for the current chunk
+            return_journey_chunk = dict(zip(chunk_keys, all_directions_chunk[:len(chunk_keys)]))
+            route_chunk = dict(zip(chunk_keys, all_directions_chunk[len(chunk_keys):]))
+            
+            route_results.update(route_chunk)
+            return_journey_results.update(return_journey_chunk)
+
+            # Wait before processing the next chunk to respect rate limits
+            if i + chunk_size < len(candidate_keys_to_route):
+                await asyncio.sleep(1) # 1-second delay between batches
 
         best_candidate_key, best_score, best_details = None, -float('inf'), {}
         
-        for key in candidate_keys_to_score:
+        for key in candidate_keys_to_route:
             route_info = route_results.get(key); return_journey_info = return_journey_results.get(key)
             if isinstance(route_info, Exception) or isinstance(return_journey_info, Exception): continue
 
@@ -538,22 +569,19 @@ async def build_itinerary(
             travel_hrs = route_info['duration_hrs']; return_journey_hrs = return_journey_info['duration_hrs']
             ideal_arrival_utc = current_dt_pack + timedelta(hours=travel_hrs)
             
-            viability = await _check_place_viability_and_timing(cand_data['name'], cand_data.get('here_opening_hours'), ideal_arrival_utc, cand_data['avg_visit_duration_hrs'], end_dt_utc, return_journey_hrs)
+            viability = await _check_place_viability_and_timing(cand_data['name'], cand_data.get('opening_hours'), ideal_arrival_utc, cand_data['avg_visit_duration_hrs'], end_dt_utc, return_journey_hrs)
             if not viability.is_viable: continue
             
             new_travel_cost = constants.COST_BASE_FARE_INR_DRIVING + (route_info['distance_km'] * constants.COST_PER_KM_INR_DRIVING) if payload.travel_mode == "driving" else 0.0
             new_activity_cost = cand_data.get('estimated_cost_inr') or 0.0
             if isinstance(new_activity_cost, (int, float)) and (total_cost_final + new_travel_cost + new_activity_cost) > payload.budget: continue
             
-            distance_from_start = _haversine_distance(start_coords[0], start_coords[1], cand_data['lat'], cand_data['lon'])
-            matched_prefs_for_cand = _get_matched_preferences(cand_data['tags'], user_prefs)
-            
-            score = _get_candidate_score(cand_data, all_keywords, matched_prefs_for_cand, distance_from_start, fulfilled_preferences, added_activity_signatures, ideal_arrival_utc, added_meal_times)
-            score -= (viability.wait_time_hrs * 100)
-            
+            original_score = next((s for s, k in scored_candidates if k == key), 0)
+            score = original_score - (travel_hrs * 50)
+
             if score > best_score:
                 best_score = score; best_candidate_key = key
-                best_details = {'arrival_dt': viability.adjusted_arrival_utc, 'departure_dt': viability.adjusted_departure_utc, 'travel_hrs': travel_hrs, 'distance_km': route_info['distance_km'], 'activity_duration_hrs': viability.adjusted_activity_duration_hrs, '_matched_prefs': matched_prefs_for_cand}
+                best_details = {'arrival_dt': viability.adjusted_arrival_utc, 'departure_dt': viability.adjusted_departure_utc, 'travel_hrs': travel_hrs, 'distance_km': route_info['distance_km'], 'activity_duration_hrs': viability.adjusted_activity_duration_hrs, '_matched_prefs': _get_matched_preferences(cand_data['tags'], user_prefs)}
 
         if not best_candidate_key: break
         
@@ -568,8 +596,6 @@ async def build_itinerary(
                 estimated_duration_hrs=round(wait_duration_hrs, 2),
                 estimated_arrival=previous_departure_time, estimated_departure=next_travel_start_time
             ))
-
-        # Meal time logic is simplified as UTC offset might not be available
         
         travel_cost = constants.COST_BASE_FARE_INR_DRIVING + (final_details['distance_km'] * constants.COST_PER_KM_INR_DRIVING) if payload.travel_mode == "driving" else 0.0
         route_info_for_leg = route_results.get(best_candidate_key)
@@ -614,7 +640,6 @@ async def build_itinerary(
     if itinerary_items_final and itinerary_items_final[-1].leg_type == "ACTIVITY":
         try:
             last_activity = itinerary_items_final[-1]
-            # final_return_directions = await location_service.get_google_directions(gmaps_client, (last_activity.lat, last_activity.lon), start_coords, payload.travel_mode)
             final_return_directions = await location_service.get_directions(http_client, (last_activity.lat, last_activity.lon), start_coords, payload.travel_mode)
             if final_return_directions:
                 final_travel_cost = constants.COST_BASE_FARE_INR_DRIVING + (final_return_directions['distance_km'] * constants.COST_PER_KM_INR_DRIVING) if payload.travel_mode == "driving" else 0.0
@@ -695,7 +720,6 @@ async def build_itinerary(
     
     logger.info(f"--- Itinerary build time: {time.time() - start_overall_time:.2f} seconds ---")
     return itinerary_response
-
 
 async def get_serendipity_suggestion(
     payload: itinerary_schemas.SerendipityRequest,
@@ -796,6 +820,7 @@ async def get_serendipity_suggestion(
             suggestion_id=str(uuid.uuid4()), 
             suggested_activity=suggested_item,
             actionable_text=actionable_text or f"✨ How about a visit to {suggested_item.activity}?",
+            replaces_activity_osm_id=None,
             time_extension_minutes=time_extension_minutes
         )
 

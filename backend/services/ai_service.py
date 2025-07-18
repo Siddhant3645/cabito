@@ -83,32 +83,31 @@ async def analyze_description_for_keywords_and_prefs(
 
     return {"keywords": [], "mapped_preferences": []}
 
-
-async def get_dynamic_local_keywords_for_preference(
+# <<< NEW EFFICIENT FUNCTION >>>
+async def get_dynamic_local_keywords_for_multiple_preferences(
     gemini_model: genai.GenerativeModel,
     city: str,
-    preference: str
+    preferences: List[str]
 ) -> List[str]:
-    """Gets hyper-local, specific keywords for a preference to improve search quality."""
-    if not all([gemini_model, city, preference]):
+    """Gets hyper-local, specific keywords for a list of preferences in a single AI call."""
+    if not all([gemini_model, city, preferences]):
         return []
 
-    example_text = constants.PROMPT_EXAMPLES_FOR_PREFERENCES.get(preference)
-    if not example_text:
-        return []
+    prompt_parts = [
+        f"You are an expert local guide for the city of '{city.title()}'. Your goal is to suggest specific, queryable keywords for a tourist based on their interests."
+    ]
+    for pref in preferences:
+        example_text = constants.PROMPT_EXAMPLES_FOR_PREFERENCES.get(pref)
+        if example_text:
+            prompt_parts.append(f"\nFor their interest in '{pref}', suggest unique local aspects. {example_text}")
+
+    prompt_parts.append("\nReturn your response ONLY as a single JSON formatted list of strings, combining all keywords from all preferences. If no truly iconic or unique local aspects come to mind for any preference, just return an empty list for that category inside the combined list.")
     
-    if preference == 'shopping':
-        example_text += " For Lucknow, this would include 'Chikankari embroidery' or 'Attar perfumes'."
-
-    prompt = (
-        f"You are an expert local guide for the city of '{city.title()}'. Your goal is to suggest specific, queryable keywords for a tourist interested in '{preference}'. "
-        f"These should be unique local aspects, not generic terms. {example_text}\n"
-        f"Return your response ONLY as a JSON formatted list of strings. If no truly iconic or unique local aspects come to mind, return an empty list."
-    )
+    prompt = "\n".join(prompt_parts)
     
     try:
         generation_config = genai.types.GenerationConfig(
-            candidate_count=1, max_output_tokens=100, temperature=0.2, response_mime_type="application/json"
+            candidate_count=1, max_output_tokens=300, temperature=0.2, response_mime_type="application/json"
         )
         coro = gemini_model.generate_content_async(prompt, generation_config=generation_config)
         response = await asyncio.wait_for(coro, timeout=AI_CALL_TIMEOUT_SECONDS)
@@ -116,13 +115,55 @@ async def get_dynamic_local_keywords_for_preference(
         if response.text:
             keywords = json.loads(response.text)
             if isinstance(keywords, list) and all(isinstance(k, str) for k in keywords):
-                logger.info(f"Dynamically fetched keywords for '{preference}': {keywords}")
+                logger.info(f"Dynamically fetched keywords for preferences {preferences}: {keywords}")
                 return [k.lower() for k in keywords]
     except asyncio.TimeoutError:
-        logger.warning(f"Dynamic keywords AI call for '{preference}' timed out.")
+        logger.warning(f"Dynamic keywords AI call for {preferences} timed out.")
     except Exception as e:
-        logger.error(f"Dynamic keywords AI error for '{preference}': {e}", exc_info=True)
+        logger.error(f"Dynamic keywords AI error for {preferences}: {e}", exc_info=True)
     return []
+
+
+
+#async def get_dynamic_local_keywords_for_preference(
+#    gemini_model: genai.GenerativeModel,
+#    city: str,
+#    preference: str
+#) -> List[str]:
+#    """Gets hyper-local, specific keywords for a preference to improve search quality."""
+#    if not all([gemini_model, city, preference]):
+#        return []
+#
+#    example_text = constants.PROMPT_EXAMPLES_FOR_PREFERENCES.get(preference)
+#    if not example_text:
+#        return []
+#    
+#    if preference == 'shopping':
+#        example_text += " For Lucknow, this would include 'Chikankari embroidery' or 'Attar perfumes'."
+#
+#    prompt = (
+#        f"You are an expert local guide for the city of '{city.title()}'. Your goal is to suggest specific, queryable keywords for a tourist interested in '{preference}'. "
+#        f"These should be unique local aspects, not generic terms. {example_text}\n"
+#        f"Return your response ONLY as a JSON formatted list of strings. If no truly iconic or unique local aspects come to mind, return an empty list."
+#    )
+#    
+#    try:
+#        generation_config = genai.types.GenerationConfig(
+#            candidate_count=1, max_output_tokens=100, temperature=0.2, response_mime_type="application/json"
+#        )
+#        coro = gemini_model.generate_content_async(prompt, generation_config=generation_config)
+#        response = await asyncio.wait_for(coro, timeout=AI_CALL_TIMEOUT_SECONDS)
+#
+#        if response.text:
+#            keywords = json.loads(response.text)
+#            if isinstance(keywords, list) and all(isinstance(k, str) for k in keywords):
+#                logger.info(f"Dynamically fetched keywords for '{preference}': {keywords}")
+#                return [k.lower() for k in keywords]
+#    except asyncio.TimeoutError:
+#        logger.warning(f"Dynamic keywords AI call for '{preference}' timed out.")
+#    except Exception as e:
+#        logger.error(f"Dynamic keywords AI error for '{preference}': {e}", exc_info=True)
+#    return []
 
 
 async def generate_creative_trip_title(
