@@ -1,13 +1,12 @@
-# /backend/services/location_service.py (Complete File with Commented-Out Google Logic)
+# /backend/services/location_service.py (Complete with OpenRouteService)
 
 import asyncio
 import functools
 import logging
-from datetime import datetime
 from typing import Any, Dict, Optional, Tuple, List
 from urllib.parse import quote_plus
 
-import googlemaps # <<< KEPT FOR COMMENTED OUT LOGIC
+import googlemaps # KEPT FOR COMMENTED OUT LOGIC
 import httpx
 import polyline
 import wikipedia
@@ -22,12 +21,11 @@ class LocationServiceError(Exception):
     """Custom exception for errors within the location service."""
     pass
 
-APP_VERSION = getattr(settings, 'PROJECT_VERSION', "4.0.0")
+APP_VERSION = "5.0.0"
 
 
 # --- Geocoding/Reverse Geocoding (Nominatim, Unchanged) ---
 async def geocode_location_text(location_text: str, http_client: httpx.AsyncClient) -> Dict[str, Any]:
-    """Geocodes a location string using Nominatim. Raises LocationServiceError on failure."""
     if not http_client:
         raise LocationServiceError("HTTP client is not available.")
     try:
@@ -47,7 +45,6 @@ async def geocode_location_text(location_text: str, http_client: httpx.AsyncClie
         raise LocationServiceError("An unexpected error occurred during geocoding.") from e
 
 async def reverse_geocode_coords(lat: float, lon: float, http_client: httpx.AsyncClient) -> Dict[str, Any]:
-    """Reverse geocodes coordinates. Raises LocationServiceError on failure."""
     if not http_client:
         raise LocationServiceError("HTTP client is not available.")
     try:
@@ -62,7 +59,7 @@ async def reverse_geocode_coords(lat: float, lon: float, http_client: httpx.Asyn
         logger.error(f"Reverse geocoding error for ({lat},{lon}): {e}", exc_info=True)
         raise LocationServiceError("An unexpected error occurred during reverse geocoding.") from e
 
-# --- NEW HERE API FUNCTIONS ---
+# --- NEW: get_directions now uses OpenRouteService ---
 async def get_directions(
     http_client: httpx.AsyncClient,
     origin_coords: Tuple[float, float],
@@ -70,80 +67,63 @@ async def get_directions(
     mode: str = "driving"
 ) -> Dict[str, Any]:
     """
-    Fetches directions using the HERE Routing API v8.
-    Decodes the polyline on the backend into a list of coordinates.
+    Fetches directions using the OpenRouteService API.
+    Decodes the polyline on the backend.
     """
     if not http_client:
-        raise LocationServiceError("HTTP client is not available for HERE directions.")
-    if not settings.HERE_API_KEY:
-        raise LocationServiceError("HERE_API_KEY not configured.")
+        raise LocationServiceError("HTTP client is not available for directions.")
+    if not settings.OPENROUTESERVICE_API_KEY:
+        raise LocationServiceError("OPENROUTESERVICE_API_KEY not configured.")
 
+    # Map our modes to OpenRouteService profiles
     transport_mode_map = {
-        "driving": "car", "walking": "pedestrian", "bicycling": "bicycle", "transit": "publicTransport"
+        "driving": "driving-car",
+        "walking": "foot-walking",
+        "bicycling": "cycling-road"
     }
-    here_transport_mode = transport_mode_map.get(mode, "car")
-    here_url = (
-        f"https://router.hereapi.com/v8/routes"
-        f"?origin={origin_coords[0]},{origin_coords[1]}"
-        f"&destination={destination_coords[0]},{destination_coords[1]}"
-        f"&transportMode={here_transport_mode}&return=polyline,summary&apiKey={settings.HERE_API_KEY}"
-    )
+    ors_profile = transport_mode_map.get(mode, "driving-car")
+
+    # Note: ORS uses lon,lat order for coordinates
+    coordinates = [
+        [origin_coords[1], origin_coords[0]],
+        [destination_coords[1], destination_coords[0]]
+    ]
+
+    ors_url = f"https://api.openrouteservice.org/v2/directions/{ors_profile}/geojson"
+    headers = {
+        'Authorization': settings.OPENROUTESERVICE_API_KEY,
+        'Content-Type': 'application/json'
+    }
+    body = {"coordinates": coordinates}
+
     try:
-        response = await http_client.get(here_url)
+        response = await http_client.post(ors_url, headers=headers, json=body)
         response.raise_for_status()
         data = response.json()
-        if not data.get("routes") or not data["routes"][0].get("sections"):
-            raise LocationServiceError(f"No valid HERE route found between {origin_coords} and {destination_coords}.")
+
+        if not data.get("features"):
+            raise LocationServiceError(f"No valid ORS route found between {origin_coords} and {destination_coords}.")
         
-        section = data["routes"][0]["sections"][0]
-        summary = section["summary"]
-        
-        encoded_polyline = section.get("polyline")
-        decoded_polyline = polyline.decode(encoded_polyline)
+        feature = data["features"][0]
+        summary = feature["properties"]["summary"]
+        encoded_polyline = feature["geometry"]["coordinates"]
+
+        # ORS GeoJSON returns decoded coordinates as [lon, lat]
+        # We need to swap them to [lat, lon] for our frontend
+        swapped_coords = [[lat, lon] for lon, lat in encoded_polyline]
 
         return {
-            "distance_km": summary.get("length", 0) / 1000.0,
+            "distance_km": summary.get("distance", 0) / 1000.0,
             "duration_hrs": summary.get("duration", 0) / 3600.0,
-            "overview_polyline": decoded_polyline
+            "overview_polyline": swapped_coords
         }
 
     except Exception as e:
-        logger.error(f"HERE Directions API error: {e}", exc_info=True)
+        logger.error(f"OpenRouteService Directions API error: {e}", exc_info=True)
         raise LocationServiceError("An unexpected error occurred while calculating directions.") from e
-
-async def get_place_details_by_name(
-    http_client: httpx.AsyncClient, place_name: str, coords: Tuple[float, float]
-) -> Optional[Dict[str, Any]]:
-    """Fetches place details using the HERE Geocode & Search API (Discover endpoint)."""
-    if not http_client or not place_name: return None
-    if not settings.HERE_API_KEY: raise LocationServiceError("HERE_API_KEY not configured.")
-
-    discover_url = (
-        f"https://discover.search.hereapi.com/v1/discover"
-        f"?q={quote_plus(place_name)}"
-        f"&at={coords[0]},{coords[1]}"
-        f"&limit=1&apiKey={settings.HERE_API_KEY}"
-    )
-    try:
-        response = await http_client.get(discover_url)
-        response.raise_for_status()
-        data = response.json()
-        if not data.get("items"): return None
-        place = data["items"][0]
-        return {
-            "here_id": place.get("id"),
-            "name": place.get("title"),
-            "position": place.get("position"),
-            "openingHours": place.get("openingHours"),
-            "rating": None, "user_ratings_total": 0, "price_level": None 
-        }
-    except Exception as e:
-        logger.warning(f"HERE Discover API error for '{place_name}': {e}")
-        return None
 
 # --- WIKIPEDIA & OSM HELPERS (UNCHANGED) ---
 async def fetch_wikipedia_summary(place_name: str, wiki_title: Optional[str]) -> Optional[str]:
-    """Fetches Wikipedia summary. Returns None if not found, raises on API error."""
     if not wiki_title:
         return None
     
@@ -165,7 +145,6 @@ async def fetch_wikipedia_summary(place_name: str, wiki_title: Optional[str]) ->
         raise LocationServiceError("Wikipedia service is currently unavailable.") from e
 
 async def fetch_osm_element_details(osm_type: str, osm_id: int, http_client: httpx.AsyncClient) -> Optional[Dict[str, Any]]:
-    """Fetches OSM element details. Returns None if not found, raises on API error."""
     if osm_type not in ["node", "way", "relation"] or not http_client:
         return None
     query = f"[out:json][timeout:{OVERPASS_TIMEOUT}];({osm_type}({osm_id}););out center;"

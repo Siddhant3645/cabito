@@ -1,4 +1,4 @@
-# /backend/core/config.py (Complete File)
+# /backend/core/config.py (Complete)
 
 from pathlib import Path
 from pydantic_settings import BaseSettings
@@ -18,8 +18,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     DATABASE_URL: str
     GOOGLE_API_KEY_GEMINI: str
-    # MAPS_API_KEY: str  # <<< COMMENTED OUT: No longer needed for backend place/directions logic
-    HERE_API_KEY: str    # <<< KEPT FOR HERE API
+    OPENROUTESERVICE_API_KEY: str # <<< ADD THIS LINE
 
     # --- Configuration with sensible defaults ---
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
