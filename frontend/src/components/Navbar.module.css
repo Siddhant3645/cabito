@@ -1,4 +1,4 @@
-/* /frontend/src/components/Navbar.module.css (Final Polish) */
+/* /frontend/src/components/Navbar.module.css (Complete) */
 
 .mainNav {
     display: flex;
@@ -12,21 +12,26 @@
     position: sticky;
     top: 0;
     z-index: 1000;
+    /* <<< FIX: Adds padding to the top to avoid the device notch/status bar >>> */
+    /* Fallback for older browsers */
+    padding-top: constant(safe-area-inset-top); 
+    /* Modern syntax */
+    padding-top: env(safe-area-inset-top);
 }
 .navGroupLeft { display: flex; align-items: center; gap: 25px; }
 .navBrandLink { display: flex; align-items: center; text-decoration: none; }
 .navLogo {
   height: 42px;
   width: auto;
-  margin-right: 5px; /* <<< FIX: Reduced gap from 10px to 5px */
+  margin-right: 5px;
   mix-blend-mode: multiply;
   transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 .navLogo:hover { transform: scale(1.1) rotate(-10deg); }
 .navBrand {
     font-family: var(--font-heading);
-    font-size: 2.1rem; /* <<< FIX: Increased font size to match logo height */
-    line-height: 1; /* <<< FIX: Ensures tight vertical alignment */
+    font-size: 2.1rem;
+    line-height: 1;
     font-weight: 800;
     color: var(--color-dark-blue);
     text-decoration: none;
@@ -53,6 +58,13 @@
 .navLinksDesktop a:hover::after,
 .navLinksDesktop a.active::after { width: 100%; }
 .navAuthDesktop { display: flex; align-items: center; gap: 15px; }
+
+.navAuthMobile {
+    display: none;
+    align-items: center;
+    gap: 10px;
+}
+
 .navUser { font-size: 0.95rem; color: var(--color-text-dark); margin-right: 10px; font-weight: 700; }
 .navButton {
   font-family: var(--font-body); font-weight: 700; font-size: 0.9rem;
@@ -189,12 +201,17 @@
     font-size: 1rem;
 }
 
-/* --- Media Query to show hamburger --- */
+/* --- Media Query to control desktop vs mobile nav --- */
 @media (max-width: 768px) {
   .navLinksDesktop,
   .navAuthDesktop {
         display: none;
     }
+  
+  .navAuthMobile {
+        display: flex;
+    }
+
   .hamburgerButton {
         display: block;
     }

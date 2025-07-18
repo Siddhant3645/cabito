@@ -206,7 +206,6 @@
 .removeButton:disabled { cursor: not-allowed !important; opacity: 0.3 !important; background: none !important; transform: none !important; }
 
 .activityContainer { position: relative; display: inline-block; }
-.activityName { /* No specific styles needed */ }
 .customTooltip {
   position: absolute; bottom: 115%; left: 0; transform: none; background-color: var(--color-dark-blue);
   color: var(--color-white); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem;

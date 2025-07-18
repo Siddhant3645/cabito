@@ -1,4 +1,4 @@
-/* /frontend/src/components/ItineraryForm.module.css */
+/* /frontend/src/components/ItineraryForm.module.css (Complete with all fixes) */
 
 .itineraryForm {
   display: flex;
@@ -430,24 +430,6 @@
     border-bottom-color: rgba(160,174,192,0.2);
 }
 
-.datetimeInputGroup {
-  align-items: center; 
-}
-.datetimeInputGroup :global(.react-datepicker-wrapper) {
-  flex-grow: 1;
-  min-width: 0;
-}
-.nowButton {
-    height: 40px;
-    line-height: normal;
-    padding-top: 0;
-    padding-bottom: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    margin-left: 10px;
-}
 :global(.react-datepicker__input-container) input,
 :global(.date-picker-input) {
   border: none !important;
@@ -455,9 +437,9 @@
   outline: none !important;
   background-color: transparent !important;
   font-family: var(--font-body) !important;
-  font-size: 1rem !important; /* <<< FIX: Added font-size to match other inputs */
-  width: 100% !important; /* Ensure it fills the wrapper */
-  padding: 10px 12px !important; /* Match other input padding */
+  font-size: 1rem !important;
+  width: 100% !important;
+  padding: 10px 12px !important;
 }
 
 :global(.react-datepicker-popper) { z-index: 1050 !important; }
@@ -466,7 +448,6 @@
   border: 1px solid var(--color-border) !important;
   border-radius: 8px !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-  min-width: 290px;
 }
 :global(.react-datepicker__header) {
   background-color: var(--color-mid-blue) !important;
@@ -500,54 +481,10 @@
   color: var(--color-white) !important;
   font-weight: bold !important;
 }
-:global(.react-datepicker__day--selected:hover),
-:global(.react-datepicker__time-list-item--selected:hover) {
-  background-color: var(--color-dark-blue) !important;
-}
 :global(.react-datepicker__day:hover),
-:global(.react-datepicker__month-text:hover),
-:global(.react-datepicker__quarter-text:hover),
-:global(.react-datepicker__year-text:hover),
 :global(.react-datepicker__time-list-item:hover) {
   background-color: var(--color-light-blue-gray) !important;
   border-radius: 50% !important;
-}
-:global(.react-datepicker__time-list-item:hover) { border-radius: 4px !important; }
-:global(.react-datepicker__day--disabled) {
-  color: #ccc !important;
-  cursor: not-allowed !important;
-  background-color: transparent !important;
-}
-:global(.react-datepicker__day--disabled:hover) {
-  background-color: transparent !important;
-}
-:global(.react-datepicker__day--outside-month) {
-  color: #aaa !important;
-}
-:global(.react-datepicker__time-container) {
-  border-left: 1px solid var(--color-border) !important;
-  min-width: 100px !important;
-}
-:global(.react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box) {
-  width: 100px !important;
-  padding-left: 0px !important;
-  padding-right: 0px !important;
-}
-:global(.react-datepicker__time-list-item) {
-  margin-left: auto !important;
-  margin-right: auto !important;
-  padding-left: 5px !important;
-  padding-right: 5px !important;
-  width: calc(100% - 10px) !important;
-  text-align: center !important;
-}
-:global(.react-datepicker__children-container) {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 0 5px 5px 5px;
-  box-sizing: border-box;
-  margin-top: 5px;
 }
 :global(.datepicker-done-button) {
   width: 100%;
@@ -563,10 +500,6 @@
   font-size: 0.95em;
   transition: background-color 0.2s ease;
 }
-:global(.datepicker-done-button:hover) {
-  background-color: var(--color-accent-orange-dark);
-}
-
 
 /* --- Media Queries for Responsiveness --- */
 @media (max-width: 768px) {
@@ -576,34 +509,37 @@
     margin-bottom: 0;
   }
   .formColumn {
-    width: 100%; /* <<< THIS FIX ensures the column stretches */
+    width: 100%;
     margin-bottom: 30px;
     gap: 20px;
   }
   .formColumn:last-child {
     margin-bottom: 0;
   }
-}
+  
+  .submitButton,
+  .surpriseMeButton {
+      width: 100%;
+      max-width: 100%;
+  }
 
-
-@media (max-width: 480px) {
-    .datetimeInputGroup,
-    .locationInputGroup,
-    .budgetGroup {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 5px;
-    }
-    .nowButton,
-    .hereButton,
-    .currencySelect {
-        margin-top: 8px;
-        width: 100%;
-        border-radius: 6px;
-        max-width: none;
-    }
-    .budgetInput {
-        border-right: none;
-        border-radius: 6px;
-    }
+  .datetimeInputGroup,
+  .locationInputGroup,
+  .budgetGroup {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 5px;
+  }
+  .nowButton,
+  .hereButton,
+  .currencySelect {
+      margin-top: 8px;
+      width: 100%;
+      border-radius: 6px;
+      max-width: none;
+  }
+  .budgetInput {
+      border-right: none;
+      border-radius: 6px;
+  }
 }

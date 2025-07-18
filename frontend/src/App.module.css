@@ -1,4 +1,4 @@
-/* /frontend/src/App.module.css (Complete) */
+/* /frontend/src/App.module.css (Updated for Safe Area) */
 
 .footer {
     margin-top: auto;
@@ -11,6 +11,12 @@
     flex-direction: column;
     align-items: center;
     gap: 15px;
+
+    /* <<< FIX: Adds padding to the bottom to avoid the mobile home bar >>> */
+    /* Fallback for older browsers */
+    padding-bottom: constant(safe-area-inset-bottom);
+    /* Modern syntax */
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 .copyright {
