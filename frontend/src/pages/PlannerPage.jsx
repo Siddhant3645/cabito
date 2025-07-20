@@ -307,6 +307,9 @@ function PlannerPage() {
                            onRemove={handleRemoveAndRegenerate}
                            completedIndices={completedIndices}
                            onToggleComplete={handleToggleComplete}
+                           progressPercentage={progressPercentage}
+                           isRegenerating={isRegenerating}
+                           tripStatus={tripStatus}
                            isViewOnly={isTripCompleted}
                            onOpenActivityDetail={(activity) => {
                              setSelectedActivityForDetail(activity);
@@ -314,24 +317,32 @@ function PlannerPage() {
                            }}
                            originalFormData={originalFormData}
                         >
+                            {/* The action buttons are now passed as children to ItineraryDisplay */}
                             <div className={styles.actionButtonContainer}>
-                                {!isTripCompleted && (
+                                {!isTripCompleted ? (
+                                    <>
+                                        <button 
+                                            onClick={markCurrentTripComplete} 
+                                            className={`${styles.actionButton} ${styles.markDone}`}
+                                        >
+                                            🏁 Mark Trip as Done
+                                        </button>
+                                        <button 
+                                          onClick={handleResetPlanner} 
+                                          className={`${styles.actionButton} ${styles.reset}`}
+                                        >
+                                            Reset & Plan New
+                                        </button>
+                                    </>
+                                ) : (
                                     <button 
-                                        onClick={markCurrentTripComplete} 
-                                        className='cta-button'
-                                        style={{backgroundColor: '#2c7a7b'}}
-                                        disabled={isLoading || isRegenerating}
+                                      onClick={handleResetPlanner} 
+                                      className={`${styles.actionButton} ${styles.reset}`}
+                                      style={{ width: '100%'}}
                                     >
-                                        🏁 Mark Trip as Done
+                                        Plan a New Trip
                                     </button>
                                 )}
-                                <button 
-                                  onClick={handleResetPlanner} 
-                                  className='cta-button'
-                                  style={{backgroundColor: '#718096'}}
-                                >
-                                    Reset & Plan New
-                                </button>
                             </div>
                         </ItineraryDisplay>
                     </div>

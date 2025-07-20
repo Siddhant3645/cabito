@@ -139,7 +139,6 @@ function ItineraryDisplay({ children, itineraryData, onRemove, completedIndices,
     const weather = itineraryData.weather_info;
     const { budget, currency, location, start_datetime, end_datetime } = originalFormData.original_request_details || originalFormData;
 
-    // --- FIX: The handler now correctly closes the panel when opening the modal ---
     const handleOpenActivityDetailModal = (activityItem) => {
         if (onOpenActivityDetail) { 
             onOpenActivityDetail(activityItem); 
@@ -147,7 +146,7 @@ function ItineraryDisplay({ children, itineraryData, onRemove, completedIndices,
             setSelectedActivityForDetail(activityItem); 
             setIsActivityDetailModalOpen(true); 
         }
-        setIsPanelOpen(false); // This line ensures the panel slides down.
+        setIsPanelOpen(false);
     };
     
     return (
@@ -177,19 +176,31 @@ function ItineraryDisplay({ children, itineraryData, onRemove, completedIndices,
 
                                 return (
                                     <div key={`mobile-${index}`} className={cardClasses} onClick={() => item.leg_type === 'ACTIVITY' && handleOpenActivityDetailModal(item)}>
-                                        {!isViewOnly && (
+                                        {item.leg_type === 'ACTIVITY' && !isViewOnly && (
                                             <div className={styles.cardCheckbox} onClick={(e) => e.stopPropagation()}>
                                                 <input type="checkbox" checked={!!isCompleted} onChange={() => onToggleComplete(index)} aria-label={`Mark ${item.activity} as complete`}/>
                                             </div>
                                         )}
+                                        {item.leg_type === 'TRAVEL' && !isViewOnly && <div className={styles.cardCheckboxPlaceholder}></div>}
+
                                         <div className={styles.cardIcon}>{icon}</div>
                                         <div className={styles.cardContent}>
                                             <span className={styles.cardTitle}>{item.activity}</span>
                                             {item.leg_type === 'ACTIVITY' && item.description && (<p className={styles.cardDescription}>{item.description}</p>)}
                                         </div>
                                         <div className={styles.cardTiming}>
-                                            <strong>{formatTimeToLocalAMPM(item.leg_type === 'TRAVEL' ? item.estimated_arrival : item.estimated_departure)}</strong>
-                                            <span>{formatDuration(item.estimated_duration_hrs)}</span>
+                                            {item.leg_type === 'TRAVEL' ? (
+                                                <>
+                                                    <span className={styles.timeRange}>{formatTimeToLocalAMPM(item.estimated_departure)} - {formatTimeToLocalAMPM(item.estimated_arrival)}</span>
+                                                    <span>{formatDuration(item.estimated_duration_hrs)}</span>
+                                                    <span className={styles.travelCost}>~₹{item.estimated_cost_inr.toFixed(0)}</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <strong>{formatTimeToLocalAMPM(item.estimated_departure)}</strong>
+                                                    <span>{formatDuration(item.estimated_duration_hrs)}</span>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                 );
