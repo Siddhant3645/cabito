@@ -223,3 +223,11 @@ code {
     max-height: 60vh;
     overflow-y: auto;
 }
+
+/* --- FIX: Edge-to-Edge Mobile Layout --- */
+@media (max-width: 768px) {
+    .App-container {
+        padding-left: 0;
+        padding-right: 0;
+    }
+}

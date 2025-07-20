@@ -1,4 +1,4 @@
-// /frontend/src/pages/PlannerPage.jsx (Complete & Fixed)
+// /frontend/src/pages/PlannerPage.jsx (Final with Button Fix)
 
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
@@ -307,16 +307,33 @@ function PlannerPage() {
                            onRemove={handleRemoveAndRegenerate}
                            completedIndices={completedIndices}
                            onToggleComplete={handleToggleComplete}
-                           progressPercentage={progressPercentage}
-                           isRegenerating={isRegenerating}
-                           tripStatus={tripStatus}
                            isViewOnly={isTripCompleted}
                            onOpenActivityDetail={(activity) => {
                              setSelectedActivityForDetail(activity);
                              setActivityDetailModalOpen(true);
                            }}
                            originalFormData={originalFormData}
-                        />
+                        >
+                            <div className={styles.actionButtonContainer}>
+                                {!isTripCompleted && (
+                                    <button 
+                                        onClick={markCurrentTripComplete} 
+                                        className='cta-button'
+                                        style={{backgroundColor: '#2c7a7b'}}
+                                        disabled={isLoading || isRegenerating}
+                                    >
+                                        🏁 Mark Trip as Done
+                                    </button>
+                                )}
+                                <button 
+                                  onClick={handleResetPlanner} 
+                                  className='cta-button'
+                                  style={{backgroundColor: '#718096'}}
+                                >
+                                    Reset & Plan New
+                                </button>
+                            </div>
+                        </ItineraryDisplay>
                     </div>
                 )}
 
@@ -328,35 +345,15 @@ function PlannerPage() {
                        </div>
                    </div>
                 )}
-                
-                {itineraryData && (
-                    <div className={styles.actionButtonContainer}>
-                        {!isTripCompleted && (
-                            <button 
-                                onClick={markCurrentTripComplete} 
-                                className='cta-button'
-                                style={{backgroundColor: '#2c7a7b', minWidth: '180px'}}
-                                disabled={isLoading || isRegenerating}
-                            >
-                                🏁 Mark Trip as Done
-                            </button>
-                        )}
-                        <button 
-                          onClick={handleResetPlanner} 
-                          className='cta-button'
-                          style={{backgroundColor: '#718096', minWidth: '180px'}}
-                        >
-                            Reset & Plan New
-                        </button>
-                    </div>
-                )}
             </main>
             
-            <ActivityDetailModal
-                isOpen={activityDetailModalOpen}
-                onClose={() => setActivityDetailModalOpen(false)}
-                activity={selectedActivityForDetail}
-            />
+            {activityDetailModalOpen && (
+                <ActivityDetailModal
+                    isOpen={activityDetailModalOpen}
+                    onClose={() => setActivityDetailModalOpen(false)}
+                    activity={selectedActivityForDetail}
+                />
+            )}
         </div>
     );
 }
