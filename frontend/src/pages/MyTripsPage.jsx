@@ -6,7 +6,9 @@ import { apiListUserTrips, apiGenerateMemorySnapshot } from '../services/api';
 import { toast } from 'react-toastify';
 import ItineraryDisplay from '../components/ItineraryDisplay';
 import ActivityDetailModal from '../components/ActivityDetailModal';
-//import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
+// --- MODIFIED CODE START ---
+// The useBodyScrollLock import has been removed.
+// --- MODIFIED CODE END ---
 import styles from './MyTripsPage.module.css';
 
 const formatDate = (isoString) => {
@@ -56,7 +58,10 @@ function MyTripsPage() {
     const [totalPages, setTotalPages] = useState(1);
     const tripsPerPage = 10;
 
-    //useBodyScrollLock(isItineraryModalOpen || isMemoryModalOpen || activityDetailModalOpen);
+    // --- MODIFIED CODE START ---
+    // The useBodyScrollLock hook and the useEffect for scrolling to top have been removed
+    // to restore the browser's default scroll behavior when a modal is open.
+    // --- MODIFIED CODE END ---
 
     const fetchTrips = useCallback(async (page) => {
         setIsLoading(true);
@@ -199,7 +204,7 @@ function MyTripsPage() {
             )}
 
             {isItineraryModalOpen && selectedTripForItinerary && (
-                <div className="modal-overlay" onClick={() => setIsItineraryModalOpen(false)}>
+                <div className="modal-overlay top-aligned-modal-overlay" onClick={() => setIsItineraryModalOpen(false)}>
                     <div className="modal-content modal-large" onClick={(e) => e.stopPropagation()}>
                         <button onClick={() => setIsItineraryModalOpen(false)} className="modal-close-button">&times;</button>
                         <div className="modal-inner-content">
@@ -207,6 +212,7 @@ function MyTripsPage() {
                                 itineraryData={selectedTripForItinerary.generated_itinerary_response}
                                 isViewOnly={true} 
                                 onOpenActivityDetail={handleOpenActivityDetail}
+                                originalFormData={selectedTripForItinerary}
                              />
                         </div>
                     </div>

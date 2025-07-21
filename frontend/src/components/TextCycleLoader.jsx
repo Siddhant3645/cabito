@@ -10,6 +10,13 @@ const loadingMessages = [
   "Decoding local secrets...",
   "Finding the most scenic routes...",
   "Polishing hidden gems...",
+  "Plotting a course for adventure...",
+  "Querying the travel oracle...",
+  "Calculating the fun quotient...",
+  "Waking up the city's spirit...",
+  "Pinpointing the tastiest snacks...",
+  "Warming up the travel engines...",
+  "Shuffling the deck of possibilities...",
 ];
 
 const TextCycleLoader = () => {

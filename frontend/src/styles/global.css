@@ -142,11 +142,21 @@ code {
     background-color: rgba(0, 0, 0, 0.65);
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center; /* Default for small modals */
     z-index: 2000;
     padding: 20px;
     overflow-y: auto;
 }
+
+/* --- NEW CODE START --- */
+/* This new, specific class targets ONLY the large itinerary modal overlay. */
+/* It aligns it to the top of the screen, fixing the positioning issue. */
+.top-aligned-modal-overlay {
+    align-items: flex-start;
+    padding-top: 5vh;
+}
+/* --- NEW CODE END --- */
+
 .modal-content {
     background: white;
     margin: auto;
@@ -180,12 +190,14 @@ code {
     padding: 0;
     display: flex;
     flex-direction: column;
-    max-height: 95vh;
+    max-height: 90vh; 
 }
 .modal-large .modal-inner-content {
     padding: 30px 40px;
     overflow-y: auto;
     flex-grow: 1;
+    /* This rule is critical for enabling scrolling in a flex container */
+    min-height: 0;
 }
 
 /* Header with action button (e.g., Copy button) */
