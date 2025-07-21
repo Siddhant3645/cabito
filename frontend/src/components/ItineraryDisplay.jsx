@@ -189,12 +189,14 @@ function ItineraryDisplay({ children, itineraryData, onRemove, completedIndices,
                                                 {item.leg_type === 'ACTIVITY' && item.description && (<p className={styles.cardDescription}>{item.description}</p>)}
                                             </div>
                                         </div>
+                                        {/* --- MODIFIED CODE START (ISSUE 1) --- */}
+                                        {/* This JSX is now a series of spans for a better inline flex layout. */}
                                         <div className={styles.cardTimingGrid}>
-                                            <div><span>Start</span><strong>{formatTimeToLocalAMPM(item.estimated_departure)}</strong></div>
-                                            <div><span>End</span><strong>{formatTimeToLocalAMPM(item.estimated_arrival)}</strong></div>
-                                            <div><span>Duration</span><strong>{formatDuration(item.estimated_duration_hrs)}</strong></div>
-                                            <div><span>Cost</span><strong>{costText}</strong></div>
+                                            <span className={styles.timingItem}>🕒 {formatTimeToLocalAMPM(item.estimated_departure)} - {formatTimeToLocalAMPM(item.estimated_arrival)}</span>
+                                            <span className={styles.timingItem}>⏳ {formatDuration(item.estimated_duration_hrs)}</span>
+                                            <span className={styles.timingItem}>💰 {costText}</span>
                                         </div>
+                                        {/* --- MODIFIED CODE END --- */}
                                     </div>
                                 );
                             }) : <p style={{textAlign: 'center', padding: '30px'}}>No activities found.</p>}
@@ -279,10 +281,7 @@ function ItineraryDisplay({ children, itineraryData, onRemove, completedIndices,
                                  {hasActivities && (
                                     <tfoot>
                                         <tr>
-                                            {/* --- MODIFIED CODE START --- */}
-                                            {/* The colSpan calculation is now corrected to properly align the final cost. */}
                                             <td colSpan={isViewOnly ? 5 : 6} style={{textAlign: 'right', paddingRight: '12px'}}>Total Estimated Cost:</td>
-                                            {/* --- MODIFIED CODE END --- */}
                                             <td className={styles.colCost}>₹{itineraryData.total_estimated_cost.toFixed(2)}</td>
                                             {!isViewOnly && <td></td>}
                                         </tr>

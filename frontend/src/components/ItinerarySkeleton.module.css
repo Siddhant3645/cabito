@@ -4,7 +4,9 @@
     margin-top: 40px;
     padding: 50px 20px;
     border-radius: 8px;
-    background-color: var(--color-background-light);
+    /* --- MODIFIED CODE START (ISSUE 4) --- */
+    background-color: var(--color-white); /* Changed from light background to white */
+    /* --- MODIFIED CODE END --- */
     border: 1px dashed var(--color-border);
     color: var(--color-mid-blue);
     text-align: center;

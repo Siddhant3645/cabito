@@ -54,7 +54,7 @@
 .budgetGroup {
   width: 100%;
   margin: 0;
-  background-color: var(--color-input-background);
+  background-color: var(--color-white); 
   border: 1px solid var(--color-input-border);
   border-radius: 10px;
   padding: 5px;
@@ -62,6 +62,7 @@
   display: flex;
   align-items: center;
 }
+
 
 .inputWrapper:hover,
 .datetimeInputGroup:hover,
@@ -226,7 +227,7 @@
   font-size: 0.9rem;
   color: var(--color-mid-blue);
   text-align: left;
-  margin-top: -1px;
+  margin-top: -20px;
   margin-bottom: 10px;
   font-style: italic;
 }
@@ -256,9 +257,10 @@
   display: block;
 }
 
+/* --- MODIFIED CODE START (ISSUE 3) --- */
 .preferencesGroup {
   border: 1px solid var(--color-input-border);
-  background-color: var(--color-input-background);
+  background-color: var(--color-white); /* Changed to match other input boxes */
   padding: 20px 30px 15px 30px;
   border-radius: 10px;
   margin-top: 0;
@@ -267,6 +269,7 @@
   position: relative;
   flex-grow: 1;
 }
+/* --- MODIFIED CODE END --- */
 
 .checkboxOption {
   display: flex;
@@ -520,27 +523,47 @@
   
   .submitButton,
   .surpriseMeButton {
-      width: 100%;
-      max-width: 100%;
+      width: 290px;
+      max-width: 90%;
   }
 
-  .datetimeInputGroup,
-  .locationInputGroup,
-  .budgetGroup {
-      flex-direction: column;
-      align-items: stretch;
+  /* --- MODIFIED CODE START (ISSUE 1) --- */
+  .datetimeInputGroup {
+      flex-direction: row; /* FIX: Keep date input and Now button on the same row */
+      align-items: center;
       padding: 5px;
   }
+  .datetimeInputGroup .nowButton {
+    margin-top: 0;
+    width: auto;
+  }
+  /* --- MODIFIED CODE END --- */
+
+  .locationInputGroup {
+      flex-direction: row;
+      align-items: center;
+      padding: 5px;
+  }
+  .locationInputGroup .hereButton {
+    margin-top: 0;
+    width: auto;
+  }
+
+  .budgetGroup {
+      flex-direction: row; 
+      align-items: center;
+      padding: 0;
+  }
   .nowButton,
-  .hereButton,
-  .currencySelect {
+  .hereButton {
       margin-top: 8px;
       width: 100%;
       border-radius: 6px;
       max-width: none;
   }
-  .budgetInput {
-      border-right: none;
-      border-radius: 6px;
+  
+  .currencySelect {
+      margin-top: 0;
+      width: auto;
   }
 }

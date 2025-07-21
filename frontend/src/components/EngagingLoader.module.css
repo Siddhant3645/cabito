@@ -2,7 +2,9 @@
 
 .engagingLoaderWrapper {
   padding: 20px;
-  background-color: var(--color-background-light);
+  /* --- MODIFIED CODE START (ISSUE 4) --- */
+  background-color: var(--color-white); /* Changed from light background to white */
+  /* --- MODIFIED CODE END --- */
   border-radius: 12px;
   border: 1px dashed var(--color-border);
   min-height: 110px;

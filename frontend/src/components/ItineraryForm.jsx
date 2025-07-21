@@ -4,7 +4,6 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { toast } from 'react-toastify';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-// import { useGoogleMaps } from '../context/GoogleMapsContext'; // <<< THIS LINE IS NOW CORRECTLY COMMENTED OUT
 import { useDebounce } from '../hooks/useDebounce';
 import { apiNominatimSearch, apiReverseGeocode } from '../services/api';
 import styles from './ItineraryForm.module.css';
@@ -120,38 +119,9 @@ function ItineraryForm({ onSubmit, activeLoader }) {
   }, [searchWrapperRef]);
 
   
-  // --- OLD GOOGLE AUTOCOMPLETE EFFECT (PRESERVED FOR FUTURE USE) ---
-  // const { google, isLoaded } = useGoogleMaps(); // This hook would be used here
   const autocompleteRef = useRef(null);
   useEffect(() => {
-    // This effect is disabled, but preserved.
-    // To re-enable, uncomment the useGoogleMaps import and the hook call above.
-    /*
-    if (!isLoaded || !google || !locationInputRef.current || autocompleteRef.current) {
-      return;
-    }
-    
-    const service = new google.maps.places.Autocomplete(locationInputRef.current, {
-        fields: ["name", "formatted_address", "geometry.location", "place_id"],
-        types: ['geocode', 'establishment']
-    });
-    autocompleteRef.current = service;
-
-    service.addListener('place_changed', () => {
-        const place = service.getPlace();
-        if (place.geometry && place.geometry.location) {
-            setLocationInputText(place.name || place.formatted_address || '');
-            setSelectedLocationName(place.name || place.formatted_address);
-            setLatitude(place.geometry.location.lat());
-            setLongitude(place.geometry.location.lng());
-            setFormErrors(prev => ({ ...prev, location: undefined }));
-        } else {
-            setSelectedLocationName(locationInputRef.current.value);
-            setLatitude(null); setLongitude(null);
-        }
-    });
-    */
-  }, [/* isLoaded, google */]); // Dependencies removed to prevent errors
+  }, []); 
   
 
   const validateDates = useCallback(() => {
@@ -184,6 +154,16 @@ function ItineraryForm({ onSubmit, activeLoader }) {
     const now = new Date();
     setStartDate(now);
     setEndDate(new Date(now.getTime() + 4 * 60 * 60 * 1000));
+  };
+  
+  const handleSetEndThen = () => {
+    if (startDate) {
+        const newEndDate = new Date(startDate.getTime() + 4 * 60 * 60 * 1000);
+        setEndDate(newEndDate);
+        toast.info("End time set to 4 hours after start time.");
+    } else {
+        toast.warn("Please set a start time first.");
+    }
   };
 
   const handleGetCurrentLocation = () => {
@@ -426,6 +406,9 @@ function ItineraryForm({ onSubmit, activeLoader }) {
                                 <CalendarContainerWithDoneButton {...props} pickerRef={endDatePickerRef} />
                             )}
                         />
+                        {/* --- MODIFIED CODE START (ISSUE 2) --- */}
+                        <button type="button" onClick={handleSetEndThen} className={styles.nowButton} title="Set end time to 4 hours after start" disabled={isFormDisabled || !startDate}>Then</button>
+                        {/* --- MODIFIED CODE END --- */}
                     </div>
                 </div>
                 {formErrors.dateTime && <p className={`${styles.inlineErrorMessage} ${styles.dateTimeError}`}>{formErrors.dateTime}</p>}

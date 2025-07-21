@@ -47,6 +47,13 @@
 }
 
 /* --- Base & Global Styles --- */
+/* --- MODIFIED CODE START (ISSUE 3) --- */
+/* This ensures the background color fills the entire screen on mobile, including safe areas. */
+html {
+  background-color: var(--color-background-light);
+}
+/* --- MODIFIED CODE END --- */
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
@@ -148,14 +155,10 @@ code {
     overflow-y: auto;
 }
 
-/* --- NEW CODE START --- */
-/* This new, specific class targets ONLY the large itinerary modal overlay. */
-/* It aligns it to the top of the screen, fixing the positioning issue. */
 .top-aligned-modal-overlay {
     align-items: flex-start;
     padding-top: 5vh;
 }
-/* --- NEW CODE END --- */
 
 .modal-content {
     background: white;
@@ -196,7 +199,6 @@ code {
     padding: 30px 40px;
     overflow-y: auto;
     flex-grow: 1;
-    /* This rule is critical for enabling scrolling in a flex container */
     min-height: 0;
 }
 
