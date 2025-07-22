@@ -1,16 +1,25 @@
 # /backend/database.py
 import os
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+# --- MODIFIED CODE START ---
+# Removed 'declarative_base' from this import
+from sqlalchemy.orm import sessionmaker
+# --- MODIFIED CODE END ---
 from typing import AsyncGenerator
 
 from core.config import settings # Import our centralized settings
+# --- MODIFIED CODE START ---
+# Import Base from our new, separate file
+from db_base import Base
+# --- MODIFIED CODE END ---
 
 # Use the DATABASE_URL from our settings object
-engine = create_async_engine(settings.DATABASE_URL, echo=False) # 'echo' is noisy, better to turn off by default
+engine = create_async_engine(settings.DATABASE_URL, echo=False)
 
-# Base class for our declarative model definitions
-Base = declarative_base()
+# --- MODIFIED CODE START ---
+# This line has been removed from here and moved to db_base.py
+# Base = declarative_base()
+# --- MODIFIED CODE END ---
 
 # Import all the models here so that Base has them registered
 # This is crucial for tools like Alembic and for create_db_and_tables to work
@@ -25,8 +34,6 @@ AsyncSessionLocal = sessionmaker(
     expire_on_commit=False,
 )
 
-# --- REVISED get_db dependency ---
-# This is the corrected version without the automatic commit.
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """
     Dependency that provides a SQLAlchemy asynchronous session.
@@ -39,8 +46,6 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
         except Exception:
             await session.rollback()
             raise
-        # 'finally' with close() is not needed as 'async with' handles it.
-
 
 async def create_db_and_tables():
     """

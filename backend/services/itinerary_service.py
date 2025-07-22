@@ -230,7 +230,7 @@ def _get_candidate_score(
     if description:
         if is_foodie and any(kw in description for kw in constants.AUTHENTICITY_KEYWORDS):
             score += constants.AUTHENTICITY_KEYWORD_BOOST_FOOD
-        if is_shopping and any(kw in description for kw in constants.SHOPPING_AUTHENTICITY_KEYWORD_BOOST):
+        if is_shopping and any(kw in description for kw in constants.SHOPPING_AUTHENTICITY_KEYWORDS):
             score += constants.SHOPPING_AUTHENTICITY_KEYWORD_BOOST
 
     # --- 3. Preference-Specific Heuristics & Penalties ---
