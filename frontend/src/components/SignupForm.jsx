@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import formStyles from './AuthForm.module.css'; // <<< Import the form styles
+import formStyles from './AuthForm.module.css';
 
 function SignupForm() {
   const [email, setEmail] = useState('');
@@ -39,13 +39,16 @@ function SignupForm() {
 
     const success = await signup(email, password);
     
+    // --- MODIFIED CODE START (ISSUE 3) ---
+    // Navigate to the planner page on success, not the login page.
     if (success) {
-      navigate('/login');
+      navigate('/planner');
     }
+    // --- MODIFIED CODE END ---
   };
 
   return (
-    <form onSubmit={handleSubmit} className={formStyles.authForm}> {/* <<< Apply scoped classes */}
+    <form onSubmit={handleSubmit} className={formStyles.authForm}>
        {(formError || authError) && <p className={formStyles.errorMessage}>{formError || authError}</p>}
       
       <div className={formStyles.formGroup}>

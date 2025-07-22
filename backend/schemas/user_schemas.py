@@ -1,6 +1,7 @@
 # /backend/schemas/user_schemas.py
 from pydantic import BaseModel, Field, EmailStr
 from typing import Optional
+import uuid
 
 # --- Token Schemas ---
 # For returning a JWT token to the client.
@@ -24,12 +25,13 @@ class UserCreate(UserBase):
 
 # Schema for returning user data to the client. Excludes sensitive data like the password.
 class UserPublic(BaseModel):
-    id: int
+    # --- MODIFIED CODE START ---
+    # Changed the ID type from UUID to a simple string to match the new format.
+    id: str
+    # --- MODIFIED CODE END ---
     email: EmailStr
     is_active: bool
 
-    # Pydantic V2 and later use from_attributes=True to enable ORM mode.
-    # This allows the model to be created directly from a SQLAlchemy model instance.
     class Config:
         from_attributes = True
 

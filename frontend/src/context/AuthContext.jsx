@@ -18,12 +18,10 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [authError, setAuthError] = useState(null);
 
-  // On initial app load, try to refresh the token to see if a session exists.
-  // This function determines if the user is already logged in.
   useEffect(() => {
     const checkLoggedInStatus = async () => {
       try {
-        await apiRefreshToken(); // This will populate the in-memory token in api.js
+        await apiRefreshToken();
         const currentUser = await apiGetCurrentUser();
         setUser(currentUser);
         setIsAuthenticated(true);
@@ -41,7 +39,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     setAuthError(null);
     try {
-      await apiLogin(email, password); // This sets the in-memory token in api.js
+      await apiLogin(email, password);
       const currentUser = await apiGetCurrentUser();
       setUser(currentUser);
       setIsAuthenticated(true);
@@ -58,12 +56,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // --- MODIFIED CODE START (ISSUE 3) ---
   const signup = async (email, password) => {
     setAuthError(null);
     try {
       await apiRegister(email, password);
-      toast.success(`Signup successful! Please log in to continue.`);
-      return true;
+      toast.success(`Signup successful! Logging you in...`);
+      // Automatically log the user in after a successful registration.
+      const loginSuccess = await login(email, password);
+      return loginSuccess;
     } catch (error) {
       console.error("AuthContext Signup failed:", error);
       const errorMessage = error.message || 'Registration failed. Please try again.';
@@ -71,10 +72,11 @@ export const AuthProvider = ({ children }) => {
       return false;
     }
   };
+  // --- MODIFIED CODE END ---
 
   const logout = useCallback(async () => {
     try {
-      await apiLogout(); // Calls the backend to clear the HttpOnly cookie
+      await apiLogout();
     } catch (error) {
       console.error("Server logout failed, clearing state regardless.", error);
     } finally {

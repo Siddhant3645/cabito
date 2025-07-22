@@ -47,12 +47,9 @@
 }
 
 /* --- Base & Global Styles --- */
-/* --- MODIFIED CODE START (ISSUE 3) --- */
-/* This ensures the background color fills the entire screen on mobile, including safe areas. */
 html {
   background-color: var(--color-background-light);
 }
-/* --- MODIFIED CODE END --- */
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
@@ -149,7 +146,7 @@ code {
     background-color: rgba(0, 0, 0, 0.65);
     display: flex;
     justify-content: center;
-    align-items: center; /* Default for small modals */
+    align-items: center;
     z-index: 2000;
     padding: 20px;
     overflow-y: auto;
@@ -186,21 +183,20 @@ code {
 .modal-close-button:hover { color: var(--color-text-dark); }
 .modal-content h3 { margin-top: 0; margin-bottom: 20px; }
 
-/* Large modal variant for itinerary/map */
+/* --- MODIFIED CODE START (ISSUE 4) --- */
+/* Refactored for a simpler, more robust scrolling behavior on all screen sizes */
 .modal-content.modal-large {
     max-width: 1200px;
     width: 95%;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    max-height: 90vh; 
+    padding: 0; /* Padding is now on the inner content div */
+    max-height: 90vh;
+    overflow-y: auto; /* The modal content itself is now the scroll container */
 }
 .modal-large .modal-inner-content {
     padding: 30px 40px;
-    overflow-y: auto;
-    flex-grow: 1;
-    min-height: 0;
+    /* Removed overflow, flex-grow, and min-height as they are no longer needed */
 }
+/* --- MODIFIED CODE END --- */
 
 /* Header with action button (e.g., Copy button) */
 .modal-header-with-action {
@@ -238,7 +234,6 @@ code {
     overflow-y: auto;
 }
 
-/* --- FIX: Edge-to-Edge Mobile Layout --- */
 @media (max-width: 768px) {
     .App-container {
         padding-left: 0;

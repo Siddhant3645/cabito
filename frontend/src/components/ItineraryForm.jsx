@@ -70,8 +70,11 @@ const CalendarContainerWithDoneButton = ({ children, pickerRef }) => {
 function ItineraryForm({ onSubmit, activeLoader }) {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date(new Date().getTime() + 4 * 60 * 60 * 1000));
-  const [locationInputText, setLocationInputText] = useState('Lucknow');
-  const [selectedLocationName, setSelectedLocationName] = useState('Lucknow'); 
+  // --- MODIFIED CODE START ---
+  // The initial state is now an empty string, allowing the placeholder to show.
+  const [locationInputText, setLocationInputText] = useState('');
+  const [selectedLocationName, setSelectedLocationName] = useState(''); 
+  // --- MODIFIED CODE END ---
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   const [isLocating, setIsLocating] = useState(false);
@@ -406,9 +409,7 @@ function ItineraryForm({ onSubmit, activeLoader }) {
                                 <CalendarContainerWithDoneButton {...props} pickerRef={endDatePickerRef} />
                             )}
                         />
-                        {/* --- MODIFIED CODE START (ISSUE 2) --- */}
                         <button type="button" onClick={handleSetEndThen} className={styles.nowButton} title="Set end time to 4 hours after start" disabled={isFormDisabled || !startDate}>Then</button>
-                        {/* --- MODIFIED CODE END --- */}
                     </div>
                 </div>
                 {formErrors.dateTime && <p className={`${styles.inlineErrorMessage} ${styles.dateTimeError}`}>{formErrors.dateTime}</p>}

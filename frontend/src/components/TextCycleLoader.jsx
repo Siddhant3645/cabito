@@ -17,6 +17,7 @@ const loadingMessages = [
   "Pinpointing the tastiest snacks...",
   "Warming up the travel engines...",
   "Shuffling the deck of possibilities...",
+
 ];
 
 const TextCycleLoader = () => {

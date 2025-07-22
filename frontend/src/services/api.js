@@ -28,7 +28,6 @@ const customFetch = async (url, options = {}) => {
         ...options.headers,
         'Authorization': `Bearer ${inMemoryToken}`,
       },
-      // Ensure credentials are included for all customFetch calls to handle cookies
       credentials: 'include',
   };
 
@@ -38,14 +37,12 @@ const customFetch = async (url, options = {}) => {
     return response;
   }
 
-  // Handle 401 Unauthorized - Token needs refresh
   if (!refreshTokenPromise) {
     refreshTokenPromise = apiRefreshToken().then(session => {
       if (session && session.access_token) {
         inMemoryToken = session.access_token;
         return inMemoryToken;
       }
-      // If refresh fails, it will throw an error handled by the catch block
     }).finally(() => {
       refreshTokenPromise = null;
     });
@@ -60,8 +57,10 @@ const customFetch = async (url, options = {}) => {
     return fetch(url, finalOptions);
   } catch(err) {
       inMemoryToken = null;
-      // Use replace to prevent user from navigating back to a broken state
-      window.location.replace('/login'); 
+      // --- MODIFIED CODE START (ISSUE 2) ---
+      // Redirect to the homepage instead of the login page on final session failure.
+      window.location.replace('/'); 
+      // --- MODIFIED CODE END ---
       return Promise.reject(err);
   }
 };
@@ -193,11 +192,8 @@ export const apiGenerateMemorySnapshot = async (tripUuid) => {
     return handleResponse(response);
 }; 
 
-// --- NEW FUNCTIONS for Open-Source Location Services ---
-
 export const apiNominatimSearch = async (query) => {
     if (!query) return [];
-    // Using a non-authenticated fetch as this is a public API
     const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&limit=5`;
     const response = await fetch(url, {
         headers: { 'Accept': 'application/json' }
@@ -206,7 +202,6 @@ export const apiNominatimSearch = async (query) => {
 };
 
 export const apiReverseGeocode = async (lat, lon) => {
-    // Using customFetch as this calls our own backend
     const response = await customFetch(`${API_BASE_URL}/api/itinerary/reverse-geocode?lat=${lat}&lon=${lon}`);
     return handleResponse(response);
 };

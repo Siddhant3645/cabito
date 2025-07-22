@@ -2,12 +2,20 @@
 import enum
 import uuid
 from datetime import datetime, timezone as dt_timezone
+# --- MODIFIED CODE START ---
+import secrets
 from sqlalchemy import (Column, Integer, String, Boolean, DateTime, Text,
                         ForeignKey, JSON, Enum as SAEnum, Float)
+# --- MODIFIED CODE END ---
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 
-# Update the import to be relative to the new file location
 from database import Base
+
+# --- NEW ID GENERATION FUNCTION ---
+def generate_custom_user_id():
+    """Generates a custom user ID with a 'cit_' prefix."""
+    return f"cit_{secrets.token_urlsafe(9)}"
 
 # --- Enums for Database ---
 class InteractionTypeEnum(str, enum.Enum):
@@ -27,7 +35,10 @@ class InteractionTypeEnum(str, enum.Enum):
 class UserAccount(Base):
     __tablename__ = "user_accounts"
 
-    id = Column(Integer, primary_key=True, index=True)
+    # --- MODIFIED CODE START ---
+    # Changed primary key from UUID to a String with a custom default generator.
+    id = Column(String(20), primary_key=True, default=generate_custom_user_id)
+    # --- MODIFIED CODE END ---
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
@@ -48,7 +59,10 @@ class UserInteraction(Base):
     __tablename__ = "user_interactions"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("user_accounts.id"), nullable=False, index=True)
+    # --- MODIFIED CODE START ---
+    # Changed foreign key to match the new String type in UserAccount.
+    user_id = Column(String(20), ForeignKey("user_accounts.id"), nullable=False, index=True)
+    # --- MODIFIED CODE END ---
     timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(dt_timezone.utc), nullable=False, index=True)
     interaction_type = Column(SAEnum(InteractionTypeEnum, name="interaction_type_enum"), nullable=False)
     osm_id = Column(Integer, nullable=True, index=True) 
@@ -66,7 +80,10 @@ class LearnedUserProfile(Base):
     __tablename__ = "learned_user_profiles"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("user_accounts.id"), nullable=False, index=True)
+    # --- MODIFIED CODE START ---
+    # Changed foreign key to match the new String type in UserAccount.
+    user_id = Column(String(20), ForeignKey("user_accounts.id"), nullable=False, index=True)
+    # --- MODIFIED CODE END ---
     profile_key = Column(String, nullable=False, index=True) 
     score = Column(Float, default=0.0, nullable=False)
     confidence = Column(Float, default=0.0, nullable=False)
@@ -84,7 +101,10 @@ class UserTrip(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     trip_uuid = Column(String, unique=True, index=True, default=lambda: str(uuid.uuid4())) 
-    user_id = Column(Integer, ForeignKey("user_accounts.id"), nullable=False, index=True)
+    # --- MODIFIED CODE START ---
+    # Changed foreign key to match the new String type in UserAccount.
+    user_id = Column(String(20), ForeignKey("user_accounts.id"), nullable=False, index=True)
+    # --- MODIFIED CODE END ---
     original_request_details = Column(JSON, nullable=False) 
     generated_itinerary_response = Column(JSON, nullable=False) 
     trip_title = Column(String, nullable=True) 
